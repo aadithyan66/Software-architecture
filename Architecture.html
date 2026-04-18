@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFCICI SYSTEM — Software Architecture Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c14;--bg2:#0d1320;--bg3:#111827;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--c-client:#a78bfa;--c-net:#38bdf8;--c-auth-ok:#34d399;--c-auth-no:#f87171;--c-db:#60a5fa;--c-azure:#818cf8;--c-success:#4ade80;--c-warn:#fbbf24;--flow-color:#38bdf8;--flow-width:2px;--font-main:'Outfit',sans-serif;--font-mono:'IBM Plex Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:var(--font-main);color:#e2e8f0;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.page{max-width:1100px;margin:0 auto;padding:36px 24px 60px;position:relative;z-index:1}
+.header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:40px}
+.header-left h1{font-size:26px;font-weight:700;letter-spacing:-0.3px;line-height:1.1}
+.header-left h1 span{color:var(--c-net)}
+.header-left p{font-size:13px;color:#64748b;margin-top:6px;font-family:var(--font-mono)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font-family:var(--font-mono);font-size:11px;padding:7px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:#94a3b8;cursor:pointer;letter-spacing:0.04em;transition:all .2s}
+.btn:hover{background:#1e293b;color:#e2e8f0;border-color:var(--c-net)}
+.btn.primary{background:var(--c-net);color:#080c14;border-color:var(--c-net);font-weight:600}
+.btn.primary:hover{background:#7dd3fc}
+.btn.danger{border-color:var(--c-auth-no);color:var(--c-auth-no)}
+.btn.danger:hover{background:rgba(248,113,113,0.1)}
+.btn.upload{border-color:var(--c-azure);color:var(--c-azure)}
+.btn.upload:hover{background:rgba(129,140,248,0.1)}
+.btn.warn{border-color:var(--c-warn);color:var(--c-warn)}
+.btn.warn:hover{background:rgba(251,191,36,0.1)}
+.canvas{position:relative;width:100%}
+.zone{border-radius:16px;border:1.5px dashed var(--border2);position:relative;padding:20px 20px 20px}
+.zone-label{position:absolute;top:-11px;left:20px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px;border-radius:4px;background:var(--bg);font-weight:500}
+.zone-network{border-color:rgba(56,189,248,0.3)}
+.zone-network .zone-label{color:var(--c-net)}
+.zone-private{border-color:rgba(96,165,250,0.3);margin-top:0}
+.zone-private .zone-label{color:var(--c-db)}
+.zone-azure{border-color:rgba(129,140,248,0.35)}
+.zone-azure .zone-label{color:var(--c-azure)}
+.node{border-radius:10px;border:1px solid var(--border2);background:var(--bg2);padding:12px 18px;text-align:center;position:relative;transition:border-color .3s,box-shadow .3s,background .3s;cursor:default;user-select:none}
+.node-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px}
+.node-title{font-size:13px;font-weight:600;color:#e2e8f0;line-height:1.2}
+.node-sub{font-size:11px;color:#475569;margin-top:3px;font-family:var(--font-mono)}
+.node-client{--accent:var(--c-client)}
+.node-gw{--accent:var(--c-net)}
+.node-auth{--accent:#fbbf24}
+.node-db{--accent:var(--c-db)}
+.node-azure{--accent:var(--c-azure)}
+.node-success{--accent:var(--c-success)}
+.node-error{--accent:var(--c-auth-no)}
+.node-warn{--accent:var(--c-warn)}
+.node.lit{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent),0 0 24px -6px var(--accent);color:var(--accent)}
+.node.lit-warn{border-color:var(--c-warn);box-shadow:0 0 0 1.5px var(--c-warn),0 0 24px -6px var(--c-warn)}
+.node.lit-err{border-color:var(--c-auth-no);box-shadow:0 0 0 1.5px var(--c-auth-no),0 0 24px -6px var(--c-auth-no)}
+.diamond{width:130px;height:66px;position:relative;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.diamond svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.diamond .d-text{font-size:12px;font-weight:600;position:relative;z-index:1;text-align:center;color:#fbbf24;line-height:1.3}
+#d-poly{transition:fill .4s,stroke .4s}
+.col{display:flex;flex-direction:column;align-items:center}
+.row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.db-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:700px){.db-grid{grid-template-columns:repeat(2,1fr)}}
+#arrows-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.flow-path{fill:none;stroke:var(--border2);stroke-width:var(--flow-width);stroke-linecap:round;transition:stroke .4s}
+.flow-path.active{stroke:var(--flow-color)}
+.flow-path.error-path{stroke:var(--c-auth-no)!important}
+.flow-path.success-path{stroke:var(--c-success)!important}
+.flow-path.azure-path{stroke:var(--c-azure)!important}
+.flow-path.warn-path{stroke:var(--c-warn)!important}
+.branch-yes{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--c-auth-ok);letter-spacing:.06em}
+.branch-no{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--c-auth-no);letter-spacing:.06em}
+.log-panel{margin-top:28px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.log-header{padding:8px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#475569;display:flex;align-items:center;gap:8px}
+.log-dot{width:6px;height:6px;border-radius:50%;background:var(--c-net);animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.log-body{padding:12px 16px;min-height:80px;max-height:140px;overflow-y:auto;font-family:var(--font-mono);font-size:12px;line-height:1.8}
+.log-body::-webkit-scrollbar{width:4px}
+.log-body::-webkit-scrollbar-track{background:transparent}
+.log-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.log-entry{display:flex;gap:12px;animation:slideIn .25s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.log-ts{color:#334155;min-width:60px}
+.log-msg{color:#94a3b8}
+.log-ok{color:var(--c-auth-ok)}
+.log-err{color:var(--c-auth-no)}
+.log-info{color:var(--c-net)}
+.log-azure{color:var(--c-azure)}
+.log-warn{color:var(--c-warn)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:20px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
+.legend-item{display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10px;color:#475569;letter-spacing:.04em}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.legend-line{width:22px;height:1.5px;flex-shrink:0}
+.legend-dashed{width:22px;border-top:1.5px dashed;flex-shrink:0}
+.gap4{height:4px}.gap8{height:8px}.gap12{height:12px}.gap16{height:16px}.gap20{height:20px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <h1>CFCICI SYSTEM <span>— Software Architecture Flow</span></h1>
+      <p>// request → auth → private cloud → response flow</p>
+    </div>
+    <div class="controls">
+      <button class="btn primary" onclick="runFlow('normal')">▶ Run full flow</button>
+      <button class="btn danger" onclick="runFlow('authfail')">✕ Auth failure</button>
+      <button class="btn upload" onclick="runFlow('upload')">⬆ File upload</button>
+      <button class="btn warn" onclick="runFlow('reqfail')">⚠ Request failure</button>
+      <button class="btn upload" onclick="runFlow('blobfail')">⬆ Blob failure</button>
+      <button class="btn" onclick="resetAll()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="canvas" id="canvas">
+    <svg id="arrows-svg" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="arr-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="arr-error" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="arr-success" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="arr-azure" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#818cf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="arr-warn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      </defs>
+    </svg>
+
+    <div class="col" style="gap:0;align-items:center">
+      <!-- CLIENT -->
+      <div id="n-client" class="node node-client" style="width:200px">
+        <div class="node-icon" style="background:rgba(167,139,250,0.15)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div class="node-title">Client</div>
+        <div class="node-sub">Browser / Mobile app</div>
+      </div>
+
+      <div class="gap16" id="gap-client-gw"></div>
+
+      <!-- NETWORK ZONE -->
+      <div class="zone zone-network" style="width:100%" id="zone-network">
+        <div class="zone-label">CFCICI NETWORK PERIMETER</div>
+        <div class="col" style="gap:0;align-items:center">
+          <!-- API GATEWAY -->
+          <div id="n-gw" class="node node-gw" style="width:260px">
+            <div class="node-icon" style="background:rgba(56,189,248,0.12)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="20" cy="6" r="2" fill="#38bdf8" stroke="none"/></svg>
+            </div>
+            <div class="node-title">API Gateway</div>
+            <div class="node-sub">TLS · routing · rate limiting</div>
+          </div>
+
+          <div class="gap16" id="gap-gw-auth"></div>
+
+          <!-- AUTH DIAMOND -->
+          <div class="diamond" id="n-auth">
+            <svg viewBox="0 0 130 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon id="d-poly" points="65,3 127,33 65,63 3,33" fill="rgba(251,191,36,0.06)" stroke="rgba(251,191,36,0.4)" stroke-width="1.5"/>
+            </svg>
+            <div class="d-text">Auth &amp;<br>Authz</div>
+          </div>
+
+          <div class="gap12"></div>
+
+          <!-- BRANCHES -->
+          <div style="width:100%;display:flex;align-items:flex-start;justify-content:center;gap:0;position:relative">
+            <!-- NO branch -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;padding-right:16px">
+              <span class="branch-no" style="margin-bottom:4px;margin-right:8px">✕ NO</span>
+              <div class="gap8" id="gap-no"></div>
+              <div id="n-err" class="node node-error" style="width:180px">
+                <div class="node-icon" style="background:rgba(248,113,113,0.12)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+                </div>
+                <div class="node-title">Error Response</div>
+                <div id="err-sub" class="node-sub">401 / 403 → Client</div>
+              </div>
+            </div>
+
+            <!-- YES column -->
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <span class="branch-yes" style="margin-bottom:4px">✓ YES</span>
+              <div class="gap12" id="gap-yes-db"></div>
+
+              <!-- PRIVATE CLOUD ZONE -->
+              <div class="zone zone-private" id="zone-private" style="width:640px;max-width:100%">
+                <div class="zone-label">Private cloud — CF Databases</div>
+                <div class="db-grid">
+                  <div id="n-svl" class="node node-db">
+                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
+                    <div class="node-title">CF_SVL</div>
+                    <div class="node-sub">SVL domain</div>
+                  </div>
+                  <div id="n-deposits" class="node node-db">
+                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
+                    <div class="node-title">CF_DEPOSITS</div>
+                    <div class="node-sub">DEPOSIT</div>
+                  </div>
+                  <div id="n-loans" class="node node-db">
+                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
+                    <div class="node-title">CF_LOANS</div>
+                    <div class="node-sub">Loan records</div>
+                  </div>
+                  <div id="n-acct" class="node node-db">
+                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
+                    <div class="node-title">CF_ACCOUNTS</div>
+                    <div class="node-sub">Account data</div>
+                  </div>
+                  <div id="n-master" class="node node-db">
+                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
+                    <div class="node-title">CF_MASTER</div>
+                    <div class="node-sub">Master data</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gap16" id="gap-db-resp"></div>
+
+              <!-- AZURE ZONE -->
+              <div class="zone zone-azure" id="zone-azure" style="width:640px;max-width:100%;opacity:.35;transition:opacity .5s">
+                <div class="zone-label">Microsoft Azure</div>
+                <div style="display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap">
+                  <div id="n-blob" class="node node-azure" style="width:210px">
+                    <div class="node-icon" style="background:rgba(129,140,248,0.12)">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"/><path d="M16 8l-4-4-4 4"/><path d="M12 4v12"/></svg>
+                    </div>
+                    <div class="node-title">Azure Blob Storage</div>
+                    <div class="node-sub">Images / Documents</div>
+                  </div>
+                  <div style="font-family:var(--font-mono);font-size:10px;color:#334155;line-height:1.7;text-align:left">
+                    <div style="color:#4c1d95;font-weight:600;font-size:11px;margin-bottom:4px">Upload flow:</div>
+                    <div>1. File → Blob Storage</div>
+                    <div>2. Azure returns Blob URL</div>
+                    <div>3. URL saved → CF_MASTER</div>
+                    <div>4. Success → Client</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gap16" id="gap-azure-success"></div>
+
+              <!-- RESPONSE -->
+              <div id="n-resp" class="node node-success" style="width:260px;opacity:.4;transition:opacity .4s">
+                <div class="node-icon" style="background:rgba(74,222,128,0.12)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <div class="node-title">Success Response</div>
+                <div class="node-sub">200 OK → Client</div>
+              </div>
+            </div>
+
+            <div style="flex:1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div style="font-family:var(--font-mono);font-size:10px;color:#334155;text-transform:uppercase;letter-spacing:.1em;width:100%;margin-bottom:2px">Legend</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(167,139,250,0.5);border:1px solid #a78bfa"></div>Client</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(56,189,248,0.2);border:1px solid #38bdf8"></div>Network / Gateway</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(251,191,36,0.15);border:1px solid #fbbf24"></div>Auth decision</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(96,165,250,0.2);border:1px solid #60a5fa"></div>CF Databases</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(129,140,248,0.2);border:1px solid #818cf8"></div>Azure Blob</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(74,222,128,0.2);border:1px solid #4ade80"></div>Success</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(248,113,113,0.2);border:1px solid #f87171"></div>Error / Reject</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(251,191,36,0.2);border:1px solid #fbbf24"></div>Warning / Timeout</div>
+    <div class="legend-item"><div class="legend-line" style="background:#38bdf8"></div>Active flow</div>
+    <div class="legend-item"><div class="legend-dashed" style="border-color:#38bdf8;opacity:.4"></div>Zone boundary</div>
+  </div>
+
+  <!-- LOG -->
+  <div class="log-panel">
+    <div class="log-header"><div class="log-dot"></div>Request trace log</div>
+    <div class="log-body" id="log">
+      <div class="log-entry"><span class="log-ts">--:--:--</span><span class="log-msg">Ready. Press a flow button to simulate a request.</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const svg = document.getElementById('arrows-svg');
+const canvas = document.getElementById('canvas');
+let paths = {};
+let running = false;
+
+function getCenter(el) {
+  const cr = canvas.getBoundingClientRect();
+  const er = el.getBoundingClientRect();
+  return {
+    x: er.left - cr.left + er.width / 2,
+    y: er.top - cr.top + er.height / 2,
+    top: er.top - cr.top,
+    bottom: er.bottom - cr.top,
+    left: er.left - cr.left,
+    right: er.right - cr.left,
+    w: er.width,
+    h: er.height
+  };
+}
+
+function makePath(id, d, cls) {
+  let p = document.getElementById('path-' + id);
+  if (!p) {
+    p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.id = 'path-' + id;
+    p.classList.add('flow-path');
+    p.setAttribute('marker-end', 'url(#arr-default)');
+    svg.appendChild(p);
+  }
+  p.setAttribute('d', d);
+  p.className.baseVal = 'flow-path';
+  if (cls) p.classList.add(cls);
+  paths[id] = p;
+  return p;
+}
+
+function activatePath(id, cls) {
+  cls = cls || 'active';
+  const p = paths[id] || document.getElementById('path-' + id);
+  if (!p) return;
+  p.className.baseVal = 'flow-path ' + cls;
+  const markerMap = { active:'arr-active','error-path':'arr-error','success-path':'arr-success','azure-path':'arr-azure','warn-path':'arr-warn' };
+  p.setAttribute('marker-end', 'url(#' + (markerMap[cls] || 'arr-active') + ')');
+}
+
+function spawnParticle(pathEl, color, delay) {
+  delay = delay || 0;
+  return new Promise(function(r) {
+    setTimeout(function() {
+      const len = pathEl.getTotalLength ? pathEl.getTotalLength() : 100;
+      const circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circ.setAttribute('r', '4.5');
+      circ.setAttribute('fill', color);
+      circ.style.filter = 'drop-shadow(0 0 5px ' + color + ')';
+      circ.style.opacity = '0';
+      svg.appendChild(circ);
+      let start = null;
+      const dur = Math.max(600, len * 2.2);
+      function step(ts) {
+        if (!start) start = ts;
+        const t = Math.min((ts - start) / dur, 1);
+        const eased = t < .1 ? t * 10 : t > .9 ? (1 - t) * 10 : 1;
+        circ.style.opacity = eased;
+        const pt = pathEl.getPointAtLength(t * len);
+        circ.setAttribute('cx', pt.x);
+        circ.setAttribute('cy', pt.y);
+        if (t < 1) requestAnimationFrame(step);
+        else { circ.remove(); r(); }
+      }
+      requestAnimationFrame(step);
+    }, delay);
+  });
+}
+
+function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+function addLog(msg, type) {
+  type = type || 'msg';
+  const logEl = document.getElementById('log');
+  const now = new Date();
+  const ts = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  const div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML = '<span class="log-ts">'+ts+'</span><span class="log-'+type+'">'+msg+'</span>';
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function lightNode(id, state) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('lit','lit-warn','lit-err');
+  if (state === 'warn') el.classList.add('lit-warn');
+  else if (state === 'err') el.classList.add('lit-err');
+  else if (state !== false) el.classList.add('lit');
+}
+
+function clearNodes() {
+  ['n-client','n-gw','n-err','n-svl','n-loans','n-acct','n-deposits','n-blob','n-resp','n-master'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('lit','lit-warn','lit-err');
+  });
+}
+
+function resetAll() {
+  running = false;
+  clearNodes();
+  document.querySelectorAll('.flow-path').forEach(function(p) {
+    p.className.baseVal = 'flow-path';
+    p.setAttribute('marker-end', 'url(#arr-default)');
+  });
+  const poly = document.getElementById('d-poly');
+  poly.setAttribute('fill','rgba(251,191,36,0.06)');
+  poly.setAttribute('stroke','rgba(251,191,36,0.4)');
+  document.getElementById('n-resp').style.opacity = '.4';
+  document.getElementById('zone-azure').style.opacity = '.35';
+  document.getElementById('err-sub').textContent = '401 / 403 → Client';
+  document.getElementById('log').innerHTML = '<div class="log-entry"><span class="log-ts">--:--:--</span><span class="log-msg">Reset complete.</span></div>';
+  drawStaticPaths();
+}
+
+function drawStaticPaths() {
+  svg.querySelectorAll('.flow-path').forEach(function(p) { p.remove(); });
+  paths = {};
+
+  const c   = getCenter(document.getElementById('n-client'));
+  const gw  = getCenter(document.getElementById('n-gw'));
+  const aEl = document.getElementById('n-auth');
+  const aC  = getCenter(aEl);
+  const err = getCenter(document.getElementById('n-err'));
+  const svl = getCenter(document.getElementById('n-svl'));
+  const lo  = getCenter(document.getElementById('n-loans'));
+  const de  = getCenter(document.getElementById('n-deposits'));
+  const ac  = getCenter(document.getElementById('n-acct'));
+  const ma  = getCenter(document.getElementById('n-master'));
+  const blob= getCenter(document.getElementById('n-blob'));
+  const res = getCenter(document.getElementById('n-resp'));
+
+  makePath('c-gw',    'M '+c.x+' '+c.bottom+' L '+gw.x+' '+(gw.top-6));
+  makePath('gw-auth', 'M '+gw.x+' '+gw.bottom+' L '+aC.x+' '+(aC.y-33+2));
+
+  const authLeft = aC.x - 65;
+  makePath('auth-err', 'M '+authLeft+' '+aC.y+' L '+(err.right+6)+' '+err.y);
+  makePath('err-client','M '+(err.left-6)+' '+err.y+' L '+(c.left-28)+' '+err.y+' L '+(c.left-28)+' '+c.y+' L '+(c.left-6)+' '+c.y);
+
+  const authBottom = aC.y + 33;
+  makePath('auth-svl',      'M '+svl.x+' '+(svl.top-6)+' L '+svl.x+' '+(authBottom+50));
+  makePath('auth-loans',    'M '+lo.x+' '+(lo.top-6)+' L '+lo.x+' '+(authBottom+50));
+  makePath('auth-deposits', 'M '+de.x+' '+(de.top-6)+' L '+de.x+' '+(authBottom+50));
+  makePath('auth-acct',     'M '+ac.x+' '+(ac.top-6)+' L '+ac.x+' '+(authBottom+50));
+  makePath('auth-master',   'M '+ma.x+' '+(ma.top-6)+' L '+ma.x+' '+(authBottom+50));
+
+  const dbBot = Math.max(svl.bottom, lo.bottom, ac.bottom, ma.bottom);
+  makePath('db-resp',    'M '+res.x+' '+(res.top-6)+' L '+res.x+' '+(dbBot+50));
+  makePath('db-success', 'M '+res.x+' '+(res.top-6)+' L '+res.x+' '+(dbBot+20));
+
+  makePath('master-blob',  'M '+(ma.right+6)+' '+ma.y+' Q '+(ma.right+60)+' '+ma.y+' '+(ma.right+60)+' '+blob.y+' L '+(blob.left-6)+' '+blob.y);
+  makePath('blob-master',  'M '+(blob.left-6)+' '+(blob.y+16)+' Q '+(ma.right+40)+' '+(blob.y+16)+' '+(ma.right+40)+' '+(ma.y+16)+' L '+(ma.right+6)+' '+(ma.y+16));
+
+  makePath('gw-client-fail','M '+gw.x+' '+gw.bottom+' Q '+gw.x+' '+(gw.bottom+60)+' '+(c.left-28)+' '+(gw.bottom+60)+' L '+(c.left-28)+' '+c.y+' L '+(c.left-6)+' '+c.y);
+
+  makePath('blob-fail-resp','M '+res.x+' '+(res.top-6)+' L '+res.x+' '+(dbBot+50));
+}
+
+window.addEventListener('resize', function() { if (!running) drawStaticPaths(); });
+drawStaticPaths();
+
+async function runFlow(type) {
+  if (running) return;
+  running = true;
+  resetAll();
+  await wait(120);
+
+  const colors = { active:'#38bdf8', error:'#f87171', success:'#4ade80', azure:'#818cf8', warn:'#fbbf24' };
+
+  if (type === 'normal' || type === 'upload') {
+    addLog('→ Client sends HTTP request', 'info');
+    lightNode('n-client');
+    activatePath('c-gw','active');
+    await spawnParticle(paths['c-gw'], colors.active);
+
+    await wait(200);
+    addLog('→ Enters network — API Gateway receives request', 'info');
+    lightNode('n-gw');
+    activatePath('gw-auth','active');
+    await spawnParticle(paths['gw-auth'], colors.active);
+
+    await wait(200);
+    addLog('→ Authenticating identity + checking permissions…', 'msg');
+    document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.15)');
+    document.getElementById('d-poly').setAttribute('stroke','rgba(251,191,36,0.7)');
+    await wait(700);
+
+    addLog('✓ Auth passed — token valid, permissions granted', 'ok');
+    document.getElementById('d-poly').setAttribute('fill','rgba(52,211,153,0.15)');
+    document.getElementById('d-poly').setAttribute('stroke','rgba(52,211,153,0.8)');
+
+    const pIds = ['auth-svl','auth-loans','auth-acct','auth-deposits','auth-master'];
+    const nIds = ['n-svl','n-loans','n-acct','n-deposits','n-master'];
+    addLog('→ Routing request into Private Cloud — CF Databases', 'info');
+
+    await Promise.all(pIds.map(function(_, i) {
+      return (async function() {
+        await wait(i * 120);
+        activatePath(pIds[i], 'active');
+        await spawnParticle(paths[pIds[i]], colors.active);
+        lightNode(nIds[i]);
+      })();
+    }));
+    await wait(300);
+    addLog('← DB query executed — records fetched', 'ok');
+
+    if (type === 'upload') {
+      document.getElementById('zone-azure').style.opacity = '1';
+      await wait(200);
+      addLog('→ File/image detected — routing to Azure Blob Storage', 'azure');
+      activatePath('master-blob','azure-path');
+      await spawnParticle(paths['master-blob'], colors.azure);
+      lightNode('n-blob');
+      await wait(300);
+      addLog('← Azure Blob Storage — file uploaded, URL generated', 'azure');
+      activatePath('blob-master','azure-path');
+      await spawnParticle(paths['blob-master'], colors.azure);
+      await wait(200);
+      addLog('→ Blob URL persisted to CF_MASTER database', 'ok');
+    }
+
+    await wait(200);
+    addLog('← Sending success response back to client', 'ok');
+    activatePath('db-resp','success-path');
+    document.getElementById('n-resp').style.opacity = '1';
+    await spawnParticle(paths['db-resp'], colors.success);
+    lightNode('n-resp');
+    await wait(100);
+    addLog(type === 'upload'
+      ? '✓ Flow complete — file stored in Azure, URL in DB, 200 OK to client'
+      : '✓ Flow complete — 200 OK returned to client', 'ok');
+
+  } else if (type === 'authfail') {
+    addLog('→ Client sends HTTP request', 'info');
+    lightNode('n-client');
+    activatePath('c-gw','active');
+    await spawnParticle(paths['c-gw'], colors.active);
+
+    await wait(200);
+    addLog('→ API Gateway receives request', 'info');
+    lightNode('n-gw');
+    activatePath('gw-auth','active');
+    await spawnParticle(paths['gw-auth'], colors.active);
+
+    await wait(300);
+    addLog('→ Checking auth token…', 'msg');
+    document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.12)');
+    document.getElementById('d-poly').setAttribute('stroke','rgba(251,191,36,0.6)');
+    await wait(800);
+
+    addLog('✕ Auth FAILED — invalid or expired token', 'err');
+    document.getElementById('d-poly').setAttribute('fill','rgba(248,113,113,0.15)');
+    document.getElementById('d-poly').setAttribute('stroke','rgba(248,113,113,0.8)');
+
+    await wait(200);
+    activatePath('auth-err','error-path');
+    await spawnParticle(paths['auth-err'], colors.error);
+    lightNode('n-err');
+    await wait(200);
+    addLog('→ Rolling back — no DB access granted', 'err');
+    activatePath('err-client','error-path');
+    await spawnParticle(paths['err-client'], colors.error);
+    lightNode('n-client');
+    await wait(100);
+    addLog('← 401 Unauthorised returned to client', 'err');
+    addLog('✕ Flow terminated at auth boundary', 'err');
+
+  } else if (type === 'reqfail') {
+    addLog('→ Client sends HTTP request', 'info');
+    lightNode('n-client');
+    activatePath('c-gw','active');
+    await spawnParticle(paths['c-gw'], colors.active);
+
+    await wait(200);
+    addLog('→ API Gateway receives request', 'info');
+    lightNode('n-gw');
+    await wait(300);
+    addLog('⚠ Gateway processing — checking upstream health…', 'warn');
+    await wait(500);
+    addLog('⚠ Upstream unreachable — connection timeout triggered', 'warn');
+    await wait(600);
+    addLog('✕ Request FAILED — gateway could not reach auth service', 'err');
+    lightNode('n-gw','warn');
+    await wait(300);
+    addLog('→ Gateway returns error to client — rolling back', 'warn');
+    activatePath('gw-client-fail','warn-path');
+    await spawnParticle(paths['gw-client-fail'], colors.warn);
+    lightNode('n-client','warn');
+    await wait(200);
+    document.getElementById('err-sub').textContent = '503 / 408 → Client';
+    lightNode('n-err','warn');
+    addLog('← 503 Service Unavailable / 408 Timeout returned to client', 'warn');
+    addLog('✕ Request terminated at network perimeter — retry recommended', 'warn');
+
+  } else if (type === 'blobfail') {
+    addLog('→ Client sends HTTP request (file upload)', 'info');
+    lightNode('n-client');
+    activatePath('c-gw','active');
+    await spawnParticle(paths['c-gw'], colors.active);
+
+    await wait(200);
+    addLog('→ API Gateway receives request', 'info');
+    lightNode('n-gw');
+    activatePath('gw-auth','active');
+    await spawnParticle(paths['gw-auth'], colors.active);
+
+    await wait(200);
+    addLog('→ Authenticating…', 'msg');
+    document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.15)');
+    document.getElementById('d-poly').setAttribute('stroke','rgba(251,191,36,0.7)');
+    await wait(700);
+    addLog('✓ Auth passed — routing to private cloud', 'ok');
+    document.getElementById('d-poly').setAttribute('fill','rgba(52,211,153,0.15)');
+    document.getElementById('d-poly').setAttribute('stroke','rgba(52,211,153,0.8)');
+
+    const pIds = ['auth-svl','auth-deposits','auth-loans','auth-acct','auth-master'];
+    const nIds = ['n-svl','n-deposits','n-loans','n-acct','n-master'];
+    await Promise.all(pIds.map(function(_, i) {
+      return (async function() {
+        await wait(i * 100);
+        activatePath(pIds[i],'active');
+        await spawnParticle(paths[pIds[i]], colors.active);
+        lightNode(nIds[i]);
+      })();
+    }));
+    await wait(300);
+    addLog('← DB query OK — file upload detected', 'ok');
+
+    document.getElementById('zone-azure').style.opacity = '1';
+    await wait(200);
+    addLog('→ Routing file to Azure Blob Storage…', 'azure');
+    activatePath('master-blob','azure-path');
+    await spawnParticle(paths['master-blob'], colors.azure);
+    await wait(300);
+    addLog('✕ Azure Blob Storage ERROR — upload failed', 'err');
+    lightNode('n-blob','err');
+    await wait(400);
+    addLog('✕ Blob URL NOT generated — CF_MASTER NOT updated', 'err');
+    addLog('→ Rolling back DB transaction — reverting changes', 'err');
+    activatePath('blob-fail-resp','error-path');
+    document.getElementById('n-resp').style.opacity = '0.4';
+    await spawnParticle(paths['blob-fail-resp'], colors.error);
+    await wait(200);
+    addLog('← 500 Internal Server Error returned to client', 'err');
+    lightNode('n-client','err');
+    addLog('✕ Upload flow failed at Azure boundary — file not stored', 'err');
+    addLog('⚠ Retry or check Azure storage quota / network connectivity', 'warn');
+  }
+
+  running = false;
+}
+</script>
+</body>
+</html>
