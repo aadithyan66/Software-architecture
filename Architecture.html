@@ -29,7 +29,6 @@ body{background:var(--bg);font-family:var(--font-main);color:#1e293b;min-height:
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(24,95,165,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(24,95,165,0.03) 1px,transparent 1px);background-size:52px 52px;pointer-events:none}
 .page{max-width:1500px;margin:0 auto;padding:32px 32px 60px;position:relative;z-index:1}
 
-/* HEADER */
 .header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #e2e8f0}
 .header-left h1{font-size:22px;font-weight:700;letter-spacing:-0.4px;color:#0f172a;line-height:1.1}
 .header-left h1 span{color:var(--c-net)}
@@ -52,10 +51,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn.warn{border-color:#fcd34d;color:var(--c-warn)}
 .btn.warn:hover{background:#fffbeb}
 
-/* CANVAS */
 .canvas{position:relative;width:100%}
 
-/* ZONES */
 .zone{border-radius:14px;border:1.5px dashed;position:relative;padding:20px}
 .zone-label{position:absolute;top:-11px;left:18px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px;border-radius:4px;font-weight:600;background:#fff}
 .zone-network{border-color:rgba(24,95,165,0.28);background:rgba(240,247,255,0.45)}
@@ -71,7 +68,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .zone-eq{border-color:rgba(234,88,12,0.28);background:rgba(255,247,237,0.45);transition:opacity .5s}
 .zone-eq .zone-label{color:var(--c-eq)}
 
-/* NODES */
 .node{border-radius:10px;border:1px solid var(--border2);background:#fff;padding:11px 14px;text-align:center;position:relative;transition:border-color .25s,box-shadow .25s;cursor:default;user-select:none;box-shadow:var(--shadow)}
 .node-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px}
 .node-title{font-size:12.5px;font-weight:600;color:#1e293b;line-height:1.2}
@@ -92,33 +88,55 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .node-ok{--accent:#16a34a}
 .node-err{--accent:var(--c-auth-no)}
 
-/* AUTH DIAMOND */
 .diamond{width:136px;height:68px;position:relative;display:flex;align-items:center;justify-content:center;margin:0 auto}
 .diamond svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .diamond .d-text{font-size:11.5px;font-weight:700;position:relative;z-index:1;text-align:center;color:#92400e;line-height:1.3}
 #d-poly{transition:fill .4s,stroke .4s}
 
-/* LAYOUT HELPERS */
 .col{display:flex;flex-direction:column;align-items:center}
 .row-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%}
 @media(max-width:900px){.row-5{grid-template-columns:repeat(3,1fr)}}
 .branch-yes{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--c-auth-ok);letter-spacing:.06em}
 .branch-no{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--c-auth-no);letter-spacing:.06em}
 
-/* SVG OVERLAY */
 #arrows-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}
-.flow-path{fill:none;stroke:rgba(0,0,0,0.08);stroke-width:2px;stroke-linecap:round;transition:stroke .35s}
-.flow-path.active{stroke:#185FA5}
-.flow-path.error-path{stroke:#dc2626!important}
-.flow-path.success-path{stroke:#16a34a!important}
-.flow-path.azure-path{stroke:#4f46e5!important}
-.flow-path.warn-path{stroke:#d97706!important}
-.flow-path.kyc-path{stroke:#7c3aed!important}
-.flow-path.nach-path{stroke:#d97706!important}
-.flow-path.eq-path{stroke:#ea580c!important}
-.flow-path.audit-path{stroke:#92400e!important}
 
-/* LOG */
+/* DEFAULT: all paths glow with their color */
+.flow-path{fill:none;stroke-width:2px;stroke-linecap:round;transition:stroke .35s,filter .35s}
+
+/* Default glow classes for each path type */
+.flow-path.default-net{stroke:#185FA5;filter:drop-shadow(0 0 4px rgba(24,95,165,0.55))}
+.flow-path.default-auth-ok{stroke:#059669;filter:drop-shadow(0 0 4px rgba(5,150,105,0.55))}
+.flow-path.default-err{stroke:#dc2626;filter:drop-shadow(0 0 4px rgba(220,38,38,0.55))}
+.flow-path.default-db{stroke:#2563eb;filter:drop-shadow(0 0 4px rgba(37,99,235,0.55))}
+.flow-path.default-azure{stroke:#4f46e5;filter:drop-shadow(0 0 4px rgba(79,70,229,0.55))}
+.flow-path.default-kyc{stroke:#7c3aed;filter:drop-shadow(0 0 4px rgba(124,58,237,0.55))}
+.flow-path.default-nach{stroke:#d97706;filter:drop-shadow(0 0 4px rgba(217,119,6,0.55))}
+.flow-path.default-eq{stroke:#ea580c;filter:drop-shadow(0 0 4px rgba(234,88,12,0.55))}
+.flow-path.default-audit{stroke:#92400e;filter:drop-shadow(0 0 4px rgba(146,64,14,0.55))}
+.flow-path.default-success{stroke:#16a34a;filter:drop-shadow(0 0 4px rgba(22,163,74,0.55))}
+
+/* Animation flow: lit paths during simulation */
+.flow-path.active{stroke:#185FA5;filter:drop-shadow(0 0 6px rgba(24,95,165,0.8))}
+.flow-path.error-path{stroke:#dc2626!important;filter:drop-shadow(0 0 6px rgba(220,38,38,0.8))!important}
+.flow-path.success-path{stroke:#16a34a!important;filter:drop-shadow(0 0 6px rgba(22,163,74,0.8))!important}
+.flow-path.azure-path{stroke:#4f46e5!important;filter:drop-shadow(0 0 6px rgba(79,70,229,0.8))!important}
+.flow-path.warn-path{stroke:#d97706!important;filter:drop-shadow(0 0 6px rgba(217,119,6,0.8))!important}
+.flow-path.kyc-path{stroke:#7c3aed!important;filter:drop-shadow(0 0 6px rgba(124,58,237,0.8))!important}
+.flow-path.nach-path{stroke:#d97706!important;filter:drop-shadow(0 0 6px rgba(217,119,6,0.8))!important}
+.flow-path.eq-path{stroke:#ea580c!important;filter:drop-shadow(0 0 6px rgba(234,88,12,0.8))!important}
+.flow-path.audit-path{stroke:#92400e!important;filter:drop-shadow(0 0 6px rgba(146,64,14,0.8))!important}
+
+/* Pulse animation for default idle glow */
+@keyframes pulseGlow {
+  0%,100%{opacity:0.7}
+  50%{opacity:1}
+}
+.flow-path.default-net,.flow-path.default-auth-ok,.flow-path.default-err,
+.flow-path.default-db,.flow-path.default-azure,.flow-path.default-kyc,
+.flow-path.default-nach,.flow-path.default-eq,.flow-path.default-audit,
+.flow-path.default-success{animation:pulseGlow 3s ease-in-out infinite}
+
 .log-panel{margin-top:24px;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
 .log-header{padding:7px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;display:flex;align-items:center;gap:8px}
 .log-dot{width:6px;height:6px;border-radius:50%;background:var(--c-net);animation:blink 1.4s ease-in-out infinite}
@@ -133,7 +151,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .log-info{color:#185FA5}.log-azure{color:#4f46e5}.log-warn{color:#d97706}
 .log-kyc{color:#7c3aed}.log-nach{color:#d97706}.log-eq{color:#ea580c}.log-audit{color:#92400e}
 
-/* LEGEND */
 .legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;padding:10px 16px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow)}
 .legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:#94a3b8}
 .ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
@@ -145,7 +162,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <body>
 <div class="page">
 
-  <!-- ── HEADER ── -->
   <div class="header">
     <div class="header-left">
       <h1>CFCICI SYSTEM <span>— Software Architecture Flow</span></h1>
@@ -164,11 +180,20 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
   </div>
 
-  <!-- ── CANVAS ── -->
   <div class="canvas" id="canvas">
     <svg id="arrows-svg" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <marker id="arr-def" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="rgba(0,0,0,0.10)" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-net" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-ok2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-err2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-db" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-az2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-kc2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-nc2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-eq2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-au2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#92400e" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-succ" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/></marker>
         <marker id="arr-act" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"/></marker>
         <marker id="arr-err" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></marker>
         <marker id="arr-ok"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/></marker>
@@ -183,7 +208,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
     <div class="col" style="gap:0;align-items:center">
 
-      <!-- CLIENT (outside boundary) -->
       <div id="n-client" class="node node-client" style="width:200px">
         <div class="node-icon" style="background:#f5f3ff">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
@@ -194,12 +218,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
       <div class="gap16"></div>
 
-      <!-- ══ NETWORK BOUNDARY ══ -->
       <div class="zone zone-network" style="width:100%" id="zone-network">
         <div class="zone-label">CFCICI Network Boundary</div>
         <div class="col" style="gap:0;align-items:center;width:100%">
 
-          <!-- API GATEWAY -->
           <div id="n-gw" class="node node-gw" style="width:280px">
             <div class="node-icon" style="background:#e0f2fe">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="20" cy="6" r="2" fill="#185FA5" stroke="none"/></svg>
@@ -210,7 +232,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
           <div class="gap16"></div>
 
-          <!-- AUTH DIAMOND -->
           <div class="diamond" id="n-auth">
             <svg viewBox="0 0 136 68" fill="none"><polygon id="d-poly" points="68,3 133,34 68,65 3,34" fill="rgba(251,191,36,0.10)" stroke="#f59e0b" stroke-width="1.5"/></svg>
             <div class="d-text">Auth &amp;<br>Authz</div>
@@ -218,10 +239,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
           <div class="gap12"></div>
 
-          <!-- BRANCH ROW -->
           <div style="width:100%;display:flex;align-items:flex-start;justify-content:center;gap:0">
 
-            <!-- NO BRANCH -->
             <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;padding-right:20px">
               <span class="branch-no" style="margin-bottom:4px;margin-right:6px">✕ NO</span>
               <div class="gap8"></div>
@@ -234,12 +253,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
               </div>
             </div>
 
-            <!-- YES BRANCH -->
             <div style="display:flex;flex-direction:column;align-items:center;flex:4">
               <span class="branch-yes" style="margin-bottom:4px">✓ YES</span>
               <div class="gap12"></div>
 
-              <!-- REQUEST ROUTER -->
               <div id="n-router" class="node node-router" style="width:280px">
                 <div class="node-icon" style="background:#f0fdf4">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f6e56" stroke-width="2" stroke-linecap="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
@@ -250,10 +267,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
               <div class="gap16"></div>
 
-              <!-- ══ SERVICE LANES (5 columns) ══ -->
               <div class="row-5">
 
-                <!-- LANE 1: Private Cloud -->
                 <div class="zone zone-private" id="zone-private">
                   <div class="zone-label" style="color:#0f6e56">Private Cloud</div>
                   <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
@@ -274,8 +289,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
                   </div>
                 </div>
 
-                <!-- LANE 2: Azure Blob -->
-                <div class="zone zone-azure" id="zone-azure" style="opacity:.35">
+                <div class="zone zone-azure" id="zone-azure">
                   <div class="zone-label">Azure Blob</div>
                   <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
                     <div id="n-blob" class="node node-azure-n">
@@ -295,8 +309,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
                   </div>
                 </div>
 
-                <!-- LANE 3: KYC -->
-                <div class="zone zone-kyc" id="zone-kyc" style="opacity:.35">
+                <div class="zone zone-kyc" id="zone-kyc">
                   <div class="zone-label">KYC</div>
                   <div style="margin-top:8px">
                     <div id="n-kyc" class="node node-kyc-n">
@@ -315,8 +328,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
                   </div>
                 </div>
 
-                <!-- LANE 4: NACH -->
-                <div class="zone zone-nach" id="zone-nach" style="opacity:.35">
+                <div class="zone zone-nach" id="zone-nach">
                   <div class="zone-label">Payments</div>
                   <div style="margin-top:8px">
                     <div id="n-nach" class="node node-nach-n">
@@ -335,8 +347,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
                   </div>
                 </div>
 
-                <!-- LANE 5: Equifax -->
-                <div class="zone zone-eq" id="zone-eq" style="opacity:.35">
+                <div class="zone zone-eq" id="zone-eq">
                   <div class="zone-label">Credit Bureau</div>
                   <div style="margin-top:8px">
                     <div id="n-eq" class="node node-eq-n">
@@ -355,14 +366,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
                   </div>
                 </div>
 
-              </div><!-- end row-5 -->
+              </div>
 
               <div class="gap16"></div>
 
-              <!-- RESPONSE AGGREGATOR + AUDIT LOG side by side -->
               <div style="display:flex;gap:16px;width:100%;justify-content:center;align-items:stretch">
-
-                <div id="n-agg" class="node node-agg" style="flex:1;max-width:320px;opacity:.35;transition:opacity .4s">
+                <div id="n-agg" class="node node-agg" style="flex:1;max-width:320px;transition:opacity .4s">
                   <div class="node-icon" style="background:#f0fdf4">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
                   </div>
@@ -370,20 +379,18 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
                   <div class="node-sub">Compose final payload</div>
                 </div>
 
-                <div id="n-audit" class="node node-audit" style="flex:1;max-width:320px;opacity:.35;transition:opacity .4s">
+                <div id="n-audit" class="node node-audit" style="flex:1;max-width:320px;transition:opacity .4s">
                   <div class="node-icon" style="background:#fef9ec">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                   </div>
                   <div class="node-title">Audit Log — MySQL</div>
                   <div class="node-sub">All requests persisted</div>
                 </div>
-
               </div>
 
               <div class="gap16"></div>
 
-              <!-- 200 OK -->
-              <div id="n-ok" class="node node-ok" style="width:300px;opacity:.35;transition:opacity .4s">
+              <div id="n-ok" class="node node-ok" style="width:300px;transition:opacity .4s">
                 <div class="node-icon" style="background:#f0fdf4">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
                 </div>
@@ -393,8 +400,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
               <div class="gap12"></div>
 
-              <!-- CLIENT SUCCESS -->
-              <div id="n-success" class="node node-ok" style="width:300px;opacity:.35;transition:opacity .4s">
+              <div id="n-success" class="node node-ok" style="width:300px;transition:opacity .4s">
                 <div class="node-icon" style="background:#f0fdf4">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
                 </div>
@@ -402,16 +408,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
                 <div class="node-sub">UI updated · toast shown</div>
               </div>
 
-            </div><!-- end YES col -->
+            </div>
             <div style="flex:1"></div>
-          </div><!-- end branch row -->
+          </div>
 
         </div>
-      </div><!-- end network zone -->
+      </div>
     </div>
-  </div><!-- end canvas -->
+  </div>
 
-  <!-- LEGEND -->
   <div class="legend">
     <div style="font-family:var(--font-mono);font-size:10px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.1em;width:100%;margin-bottom:2px">Legend</div>
     <div class="legend-item"><div class="ld" style="background:#f5f3ff;border:1px solid #7c3aed"></div>Client</div>
@@ -425,11 +430,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="legend-item"><div class="ld" style="background:#fef9ec;border:1px solid #92400e"></div>Audit log</div>
     <div class="legend-item"><div class="ld" style="background:#f0fdf4;border:1px solid #16a34a"></div>Success</div>
     <div class="legend-item"><div class="ld" style="background:#fef2f2;border:1px solid #dc2626"></div>Error</div>
-    <div class="legend-item"><div class="ll" style="background:#185FA5"></div>Active flow</div>
+    <div class="legend-item"><div class="ll" style="background:#185FA5;box-shadow:0 0 4px #185FA5"></div>Glowing flow</div>
     <div class="legend-item"><div class="ll" style="border-top:1.5px dashed rgba(0,0,0,0.15)"></div>Zone boundary</div>
   </div>
 
-  <!-- LOG PANEL -->
   <div class="log-panel">
     <div class="log-header"><div class="log-dot"></div>Request trace log</div>
     <div class="log-body" id="log">
@@ -437,13 +441,69 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
   </div>
 
-</div><!-- end page -->
+</div>
 
 <script>
 const svgEl = document.getElementById('arrows-svg');
 const canvas = document.getElementById('canvas');
 let paths = {};
 let running = false;
+
+// Default glow class per path id
+const defaultGlowMap = {
+  'c-gw':      'default-net',
+  'gw-auth':   'default-net',
+  'auth-err':  'default-err',
+  'err-client':'default-err',
+  'auth-rt':   'default-auth-ok',
+  'rt-pri':    'default-db',
+  'rt-sec':    'default-db',
+  'rt-blob':   'default-azure',
+  'rt-kyc':    'default-kyc',
+  'rt-nach':   'default-nach',
+  'rt-eq':     'default-eq',
+  'blob-agg':  'default-azure',
+  'pri-agg':   'default-db',
+  'kyc-agg':   'default-kyc',
+  'nach-agg':  'default-nach',
+  'eq-agg':    'default-eq',
+  'agg-aud':   'default-audit',
+  'agg-ok':    'default-success',
+  'ok-su':     'default-success',
+  'gw-fail':   'default-err',
+  'blob-err':  'default-err',
+};
+
+// Default marker per path
+const defaultMarkerMap = {
+  'c-gw':      'arr-net',
+  'gw-auth':   'arr-net',
+  'auth-err':  'arr-err2',
+  'err-client':'arr-err2',
+  'auth-rt':   'arr-ok2',
+  'rt-pri':    'arr-db',
+  'rt-sec':    'arr-db',
+  'rt-blob':   'arr-az2',
+  'rt-kyc':    'arr-kc2',
+  'rt-nach':   'arr-nc2',
+  'rt-eq':     'arr-eq2',
+  'blob-agg':  'arr-az2',
+  'pri-agg':   'arr-db',
+  'kyc-agg':   'arr-kc2',
+  'nach-agg':  'arr-nc2',
+  'eq-agg':    'arr-eq2',
+  'agg-aud':   'arr-au2',
+  'agg-ok':    'arr-succ',
+  'ok-su':     'arr-succ',
+  'gw-fail':   'arr-err2',
+  'blob-err':  'arr-err2',
+};
+
+const mmap={
+  'active':'arr-act','error-path':'arr-err','success-path':'arr-ok',
+  'azure-path':'arr-az','warn-path':'arr-wn','kyc-path':'arr-kc',
+  'nach-path':'arr-nc','eq-path':'arr-eq','audit-path':'arr-au'
+};
 
 function gc(el){
   const cr=canvas.getBoundingClientRect(), er=el.getBoundingClientRect();
@@ -455,18 +515,28 @@ function gc(el){
 
 function mkPath(id,d){
   let p=document.getElementById('p-'+id);
-  if(!p){p=document.createElementNS('http://www.w3.org/2000/svg','path');p.id='p-'+id;p.classList.add('flow-path');p.setAttribute('marker-end','url(#arr-def)');svgEl.appendChild(p);}
-  p.setAttribute('d',d); p.className.baseVal='flow-path'; p.setAttribute('marker-end','url(#arr-def)');
+  if(!p){p=document.createElementNS('http://www.w3.org/2000/svg','path');p.id='p-'+id;svgEl.appendChild(p);}
+  p.setAttribute('d',d);
+  // Apply default glow
+  const glowCls = defaultGlowMap[id] || 'default-net';
+  const markerCls = defaultMarkerMap[id] || 'arr-net';
+  p.className.baseVal='flow-path '+glowCls;
+  p.setAttribute('marker-end','url(#'+markerCls+')');
   paths[id]=p; return p;
 }
-
-const mmap={'active':'arr-act','error-path':'arr-err','success-path':'arr-ok','azure-path':'arr-az',
-            'warn-path':'arr-wn','kyc-path':'arr-kc','nach-path':'arr-nc','eq-path':'arr-eq','audit-path':'arr-au'};
 
 function actPath(id,cls){
   cls=cls||'active'; const p=paths[id]; if(!p)return;
   p.className.baseVal='flow-path '+cls;
   p.setAttribute('marker-end','url(#'+(mmap[cls]||'arr-act')+')');
+}
+
+function restorePathGlow(id){
+  const p=paths[id]; if(!p)return;
+  const glowCls = defaultGlowMap[id] || 'default-net';
+  const markerCls = defaultMarkerMap[id] || 'arr-net';
+  p.className.baseVal='flow-path '+glowCls;
+  p.setAttribute('marker-end','url(#'+markerCls+')');
 }
 
 function spawnP(pathEl,color,delay){
@@ -475,8 +545,8 @@ function spawnP(pathEl,color,delay){
     setTimeout(()=>{
       const len=pathEl.getTotalLength?pathEl.getTotalLength():80;
       const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      c.setAttribute('r','4'); c.setAttribute('fill',color);
-      c.style.filter='drop-shadow(0 0 5px '+color+')'; c.style.opacity='0';
+      c.setAttribute('r','5'); c.setAttribute('fill',color);
+      c.style.filter='drop-shadow(0 0 7px '+color+')'; c.style.opacity='0';
       svgEl.appendChild(c);
       let st=null; const dur=Math.max(480,len*1.9);
       function step(ts){
@@ -519,11 +589,10 @@ function clearAll(){allNodes.forEach(id=>{const el=document.getElementById(id);i
 
 function resetAll(){
   running=false; clearAll();
-  svgEl.querySelectorAll('.flow-path').forEach(p=>{p.className.baseVal='flow-path';p.setAttribute('marker-end','url(#arr-def)');});
+  // Restore all paths to default glow
+  Object.keys(paths).forEach(id=>restorePathGlow(id));
   document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.10)');
   document.getElementById('d-poly').setAttribute('stroke','#f59e0b');
-  ['n-agg','n-audit','n-ok','n-success'].forEach(id=>{ const el=document.getElementById(id); if(el)el.style.opacity='.35'; });
-  ['zone-azure','zone-kyc','zone-nach','zone-eq'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.opacity='.35';});
   document.getElementById('err-sub').textContent='401 / 403 → Rollback';
   document.getElementById('log').innerHTML='<div class="log-entry"><span class="log-ts">--:--:--</span><span class="log-msg">Reset complete.</span></div>';
   drawPaths();
@@ -548,47 +617,34 @@ function drawPaths(){
   const ok =gc(document.getElementById('n-ok'));
   const su =gc(document.getElementById('n-success'));
 
-  // client → gw
   mkPath('c-gw',    `M${cl.x} ${cl.bottom} L${gw.x} ${gw.top-6}`);
-  // gw → auth
   mkPath('gw-auth', `M${gw.x} ${gw.bottom} L${au.x} ${au.y-35}`);
-  // auth NO → err
   const aL=au.x-68;
   mkPath('auth-err',   `M${aL} ${au.y} L${err.right+6} ${err.y}`);
   mkPath('err-client', `M${err.left-6} ${err.y} L${cl.left-28} ${err.y} L${cl.left-28} ${cl.y} L${cl.left-6} ${cl.y}`);
-  // auth YES → router
   const aB=au.y+35;
   mkPath('auth-rt',   `M${au.x} ${aB} L${rt.x} ${rt.top-6}`);
-  // router → each lane (fan out via bus)
   mkPath('rt-pri',  `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${pr.x} ${pr.top-6}`);
   mkPath('rt-sec',  `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${sc.x} ${sc.top-6}`);
   mkPath('rt-blob', `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${bl.x} ${bl.top-6}`);
   mkPath('rt-kyc',  `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${kc.x} ${kc.top-6}`);
   mkPath('rt-nach', `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${nc.x} ${nc.top-6}`);
   mkPath('rt-eq',   `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${eq.x} ${eq.top-6}`);
-  // blob return → aggregator
   mkPath('blob-agg',`M${bl.x} ${bl.bottom+6} Q${bl.x} ${bl.bottom+40} ${ag.x} ${ag.top-6}`);
-  // lanes → aggregator (response paths)
   mkPath('pri-agg', `M${pr.x} ${pr.bottom+6} Q${pr.x} ${pr.bottom+50} ${ag.x-30} ${ag.top-6}`);
   mkPath('kyc-agg', `M${kc.x} ${kc.bottom+6} Q${kc.x} ${kc.bottom+40} ${ag.x+10} ${ag.top-6}`);
   mkPath('nach-agg',`M${nc.x} ${nc.bottom+6} Q${nc.x} ${nc.bottom+40} ${ag.x+30} ${ag.top-6}`);
   mkPath('eq-agg',  `M${eq.x} ${eq.bottom+6} Q${eq.x} ${eq.bottom+40} ${ag.x+50} ${ag.top-6}`);
-  // agg → audit
   mkPath('agg-aud', `M${ag.right+6} ${ag.y} L${ad.left-6} ${ad.y}`);
-  // agg → 200 OK
   mkPath('agg-ok',  `M${ag.x} ${ag.bottom+6} L${ok.x} ${ok.top-6}`);
-  // 200 ok → client success
   mkPath('ok-su',   `M${ok.x} ${ok.bottom+6} L${su.x} ${su.top-6}`);
-  // gw timeout path
   mkPath('gw-fail', `M${gw.x} ${gw.bottom} Q${gw.x} ${gw.bottom+60} ${cl.left-28} ${gw.bottom+60} L${cl.left-28} ${cl.y} L${cl.left-6} ${cl.y}`);
-  // blob fail → back to error state
   mkPath('blob-err',`M${bl.x} ${bl.bottom+6} Q${bl.x} ${bl.bottom+50} ${ok.x} ${ok.top-6}`);
 }
 
 window.addEventListener('resize',()=>{if(!running)drawPaths();});
 drawPaths();
 
-// ── AUTH HELPERS ──
 function authPending(){document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.15)');document.getElementById('d-poly').setAttribute('stroke','#f59e0b');}
 function authPass(){document.getElementById('d-poly').setAttribute('fill','rgba(5,150,105,0.12)');document.getElementById('d-poly').setAttribute('stroke','#059669');}
 function authFail(){document.getElementById('d-poly').setAttribute('fill','rgba(220,38,38,0.10)');document.getElementById('d-poly').setAttribute('stroke','#dc2626');}
@@ -623,18 +679,16 @@ async function routerAndDB(){
 async function finalize(label){
   await wait(200);
   addLog('→ Response Aggregator — composing payload','ok');
-  document.getElementById('n-agg').style.opacity='1'; litNode('n-agg');
+  litNode('n-agg');
   actPath('agg-aud','audit-path'); await spawnP(paths['agg-aud'],'#92400e');
-  document.getElementById('n-audit').style.opacity='1'; litNode('n-audit');
+  litNode('n-audit');
   addLog('→ Audit Log (MySQL) — request persisted','audit');
   await wait(180);
   actPath('agg-ok','success-path');
-  document.getElementById('n-ok').style.opacity='1';
   await spawnP(paths['agg-ok'],'#16a34a');
   litNode('n-ok');
   await wait(80);
   actPath('ok-su','success-path');
-  document.getElementById('n-success').style.opacity='1';
   await spawnP(paths['ok-su'],'#16a34a');
   litNode('n-success');
   addLog(label,'ok');
@@ -644,15 +698,12 @@ async function runFlow(type){
   if(running)return; running=true; resetAll(); await wait(100);
   const C={act:'#185FA5',err:'#dc2626',ok:'#16a34a',az:'#4f46e5',wn:'#d97706',kc:'#7c3aed',nc:'#d97706',eq:'#ea580c',au:'#92400e'};
 
-  // ── NORMAL ──
   if(type==='normal'){
     await clientToAuth(); await routerAndDB();
     await finalize('✓ Flow complete — 200 OK returned to client');
 
-  // ── UPLOAD ──
   }else if(type==='upload'){
     await clientToAuth(); await routerAndDB();
-    document.getElementById('zone-azure').style.opacity='1';
     await wait(200);
     addLog('→ File detected — routing to Azure Blob Storage','azure');
     actPath('rt-blob','azure-path'); await spawnP(paths['rt-blob'],C.az);
@@ -663,10 +714,8 @@ async function runFlow(type){
     addLog('→ Blob URL persisted to MySQL (Primary DB)','ok');
     await finalize('✓ Upload complete — file in Azure, URL in DB, 200 OK to client');
 
-  // ── KYC ──
   }else if(type==='kyc'){
     await clientToAuth(); await routerAndDB();
-    document.getElementById('zone-kyc').style.opacity='1';
     await wait(200);
     addLog('→ KYC required — initiating identity verification','kyc');
     actPath('rt-kyc','kyc-path'); await spawnP(paths['rt-kyc'],C.kc);
@@ -677,10 +726,8 @@ async function runFlow(type){
     addLog('→ KYC status written to Primary DB','ok');
     await finalize('✓ KYC complete — identity verified, 200 OK to client');
 
-  // ── NACH ──
   }else if(type==='nach'){
     await clientToAuth(); await routerAndDB();
-    document.getElementById('zone-nach').style.opacity='1';
     await wait(200);
     addLog('→ Mandate request — routing to NACH / eNACH / upiNACH','nach');
     actPath('rt-nach','nach-path'); await spawnP(paths['rt-nach'],C.nc);
@@ -691,10 +738,8 @@ async function runFlow(type){
     addLog('→ NACH mandate reference stored in Primary DB','ok');
     await finalize('✓ NACH flow complete — mandate active, 200 OK to client');
 
-  // ── EQUIFAX ──
   }else if(type==='equifax'){
     await clientToAuth(); await routerAndDB();
-    document.getElementById('zone-eq').style.opacity='1';
     await wait(200);
     addLog('→ Credit check required — calling Equifax bureau','eq');
     actPath('rt-eq','eq-path'); await spawnP(paths['rt-eq'],C.eq);
@@ -705,7 +750,6 @@ async function runFlow(type){
     addLog('→ Credit score persisted to Primary DB','ok');
     await finalize('✓ Equifax enquiry complete — score stored, 200 OK to client');
 
-  // ── AUTH FAIL ──
   }else if(type==='authfail'){
     addLog('→ Client sends HTTPS request','info'); litNode('n-client');
     actPath('c-gw','active'); await spawnP(paths['c-gw'],C.act);
@@ -725,7 +769,6 @@ async function runFlow(type){
     addLog('← 401 Unauthorised returned to client','err');
     addLog('✕ Flow terminated at auth boundary','err');
 
-  // ── REQUEST FAIL ──
   }else if(type==='reqfail'){
     addLog('→ Client sends HTTPS request','info'); litNode('n-client');
     actPath('c-gw','active'); await spawnP(paths['c-gw'],C.act);
@@ -744,10 +787,8 @@ async function runFlow(type){
     addLog('← 503 Service Unavailable / 408 Timeout returned','warn');
     addLog('✕ Terminated at network perimeter — retry recommended','warn');
 
-  // ── BLOB FAIL ──
   }else if(type==='blobfail'){
     await clientToAuth(); await routerAndDB();
-    document.getElementById('zone-azure').style.opacity='1';
     await wait(200);
     addLog('→ File upload — routing to Azure Blob Storage','azure');
     actPath('rt-blob','azure-path'); await spawnP(paths['rt-blob'],C.az);
@@ -762,6 +803,9 @@ async function runFlow(type){
     addLog('⚠ Check Azure quota / connectivity / SAS token','warn');
   }
 
+  // After simulation ends, restore glow on all paths
+  await wait(800);
+  Object.keys(paths).forEach(id=>restorePathGlow(id));
   running=false;
 }
 </script>
