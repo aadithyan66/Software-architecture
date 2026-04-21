@@ -3,636 +3,766 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CFCICI SYSTEM — Software Architecture Flow</title>
+<title>CFCICI SYSTEM — Software Architecture Flow v4</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080c14;--bg2:#0d1320;--bg3:#111827;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--c-client:#a78bfa;--c-net:#38bdf8;--c-auth-ok:#34d399;--c-auth-no:#f87171;--c-db:#60a5fa;--c-azure:#818cf8;--c-success:#4ade80;--c-warn:#fbbf24;--flow-color:#38bdf8;--flow-width:2px;--font-main:'Outfit',sans-serif;--font-mono:'IBM Plex Mono',monospace}
+:root{
+  --bg:#ffffff;--bg2:#f8fafc;--bg3:#f1f5f9;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.11);
+  --c-client:#7c3aed;
+  --c-net:#185FA5;
+  --c-auth-ok:#059669;--c-auth-no:#dc2626;
+  --c-db:#2563eb;
+  --c-azure:#4f46e5;
+  --c-kyc:#7c3aed;
+  --c-nach:#d97706;
+  --c-eq:#ea580c;
+  --c-audit:#92400e;
+  --c-success:#16a34a;
+  --c-warn:#d97706;
+  --flow-color:#185FA5;--flow-width:2px;
+  --font-main:'Outfit',sans-serif;--font-mono:'IBM Plex Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);font-family:var(--font-main);color:#e2e8f0;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
-.page{max-width:1100px;margin:0 auto;padding:36px 24px 60px;position:relative;z-index:1}
-.header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:40px}
-.header-left h1{font-size:26px;font-weight:700;letter-spacing:-0.3px;line-height:1.1}
+body{background:var(--bg);font-family:var(--font-main);color:#1e293b;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(24,95,165,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(24,95,165,0.03) 1px,transparent 1px);background-size:52px 52px;pointer-events:none}
+.page{max-width:1500px;margin:0 auto;padding:32px 32px 60px;position:relative;z-index:1}
+
+/* HEADER */
+.header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #e2e8f0}
+.header-left h1{font-size:22px;font-weight:700;letter-spacing:-0.4px;color:#0f172a;line-height:1.1}
 .header-left h1 span{color:var(--c-net)}
-.header-left p{font-size:13px;color:#64748b;margin-top:6px;font-family:var(--font-mono)}
-.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.btn{font-family:var(--font-mono);font-size:11px;padding:7px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:#94a3b8;cursor:pointer;letter-spacing:0.04em;transition:all .2s}
-.btn:hover{background:#1e293b;color:#e2e8f0;border-color:var(--c-net)}
-.btn.primary{background:var(--c-net);color:#080c14;border-color:var(--c-net);font-weight:600}
-.btn.primary:hover{background:#7dd3fc}
-.btn.danger{border-color:var(--c-auth-no);color:var(--c-auth-no)}
-.btn.danger:hover{background:rgba(248,113,113,0.1)}
-.btn.upload{border-color:var(--c-azure);color:var(--c-azure)}
-.btn.upload:hover{background:rgba(129,140,248,0.1)}
-.btn.warn{border-color:var(--c-warn);color:var(--c-warn)}
-.btn.warn:hover{background:rgba(251,191,36,0.1)}
+.header-left p{font-size:11.5px;color:#94a3b8;margin-top:5px;font-family:var(--font-mono)}
+.controls{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.btn{font-family:var(--font-mono);font-size:11px;padding:6px 13px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:#64748b;cursor:pointer;letter-spacing:0.03em;transition:all .18s;box-shadow:var(--shadow);white-space:nowrap}
+.btn:hover{background:#f1f5f9;color:#1e293b;border-color:#94a3b8}
+.btn.primary{background:var(--c-net);color:#fff;border-color:var(--c-net);font-weight:600;box-shadow:0 2px 8px rgba(24,95,165,0.22)}
+.btn.primary:hover{background:#0f4a85}
+.btn.danger{border-color:#fca5a5;color:var(--c-auth-no)}
+.btn.danger:hover{background:#fef2f2}
+.btn.upload{border-color:#a5b4fc;color:var(--c-azure)}
+.btn.upload:hover{background:#eef2ff}
+.btn.kyc-btn{border-color:#c4b5fd;color:var(--c-kyc)}
+.btn.kyc-btn:hover{background:#f5f3ff}
+.btn.nach-btn{border-color:#fcd34d;color:var(--c-nach)}
+.btn.nach-btn:hover{background:#fffbeb}
+.btn.eq-btn{border-color:#fdba74;color:var(--c-eq)}
+.btn.eq-btn:hover{background:#fff7ed}
+.btn.warn{border-color:#fcd34d;color:var(--c-warn)}
+.btn.warn:hover{background:#fffbeb}
+
+/* CANVAS */
 .canvas{position:relative;width:100%}
-.zone{border-radius:16px;border:1.5px dashed var(--border2);position:relative;padding:20px 20px 20px}
-.zone-label{position:absolute;top:-11px;left:20px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px;border-radius:4px;background:var(--bg);font-weight:500}
-.zone-network{border-color:rgba(56,189,248,0.3)}
+
+/* ZONES */
+.zone{border-radius:14px;border:1.5px dashed;position:relative;padding:20px}
+.zone-label{position:absolute;top:-11px;left:18px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px;border-radius:4px;font-weight:600;background:#fff}
+.zone-network{border-color:rgba(24,95,165,0.28);background:rgba(240,247,255,0.45)}
 .zone-network .zone-label{color:var(--c-net)}
-.zone-private{border-color:rgba(96,165,250,0.3);margin-top:0}
-.zone-private .zone-label{color:var(--c-db)}
-.zone-azure{border-color:rgba(129,140,248,0.35)}
+.zone-private{border-color:rgba(15,110,86,0.28);background:rgba(240,253,248,0.45)}
+.zone-private .zone-label{color:#0f6e56}
+.zone-azure{border-color:rgba(79,70,229,0.28);background:rgba(238,242,255,0.35);transition:opacity .5s}
 .zone-azure .zone-label{color:var(--c-azure)}
-.node{border-radius:10px;border:1px solid var(--border2);background:var(--bg2);padding:12px 18px;text-align:center;position:relative;transition:border-color .3s,box-shadow .3s,background .3s;cursor:default;user-select:none}
-.node-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px}
-.node-title{font-size:13px;font-weight:600;color:#e2e8f0;line-height:1.2}
-.node-sub{font-size:11px;color:#475569;margin-top:3px;font-family:var(--font-mono)}
+.zone-kyc{border-color:rgba(124,58,237,0.25);background:rgba(245,243,255,0.35);transition:opacity .5s}
+.zone-kyc .zone-label{color:var(--c-kyc)}
+.zone-nach{border-color:rgba(217,119,6,0.28);background:rgba(255,251,235,0.45);transition:opacity .5s}
+.zone-nach .zone-label{color:var(--c-nach)}
+.zone-eq{border-color:rgba(234,88,12,0.28);background:rgba(255,247,237,0.45);transition:opacity .5s}
+.zone-eq .zone-label{color:var(--c-eq)}
+
+/* NODES */
+.node{border-radius:10px;border:1px solid var(--border2);background:#fff;padding:11px 14px;text-align:center;position:relative;transition:border-color .25s,box-shadow .25s;cursor:default;user-select:none;box-shadow:var(--shadow)}
+.node-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px}
+.node-title{font-size:12.5px;font-weight:600;color:#1e293b;line-height:1.2}
+.node-sub{font-size:10px;color:#94a3b8;margin-top:2px;font-family:var(--font-mono)}
+.node.lit{border-color:var(--accent,#185FA5);box-shadow:0 0 0 2px var(--accent,#185FA5),0 4px 16px -4px var(--accent,#185FA5)}
+.node.lit-warn{border-color:var(--c-warn);box-shadow:0 0 0 2px var(--c-warn),0 4px 14px -4px var(--c-warn)}
+.node.lit-err{border-color:var(--c-auth-no);box-shadow:0 0 0 2px var(--c-auth-no),0 4px 14px -4px var(--c-auth-no)}
 .node-client{--accent:var(--c-client)}
 .node-gw{--accent:var(--c-net)}
-.node-auth{--accent:#fbbf24}
+.node-router{--accent:#0f6e56}
 .node-db{--accent:var(--c-db)}
-.node-azure{--accent:var(--c-azure)}
-.node-success{--accent:var(--c-success)}
-.node-error{--accent:var(--c-auth-no)}
-.node-warn{--accent:var(--c-warn)}
-.node.lit{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent),0 0 24px -6px var(--accent);color:var(--accent)}
-.node.lit-warn{border-color:var(--c-warn);box-shadow:0 0 0 1.5px var(--c-warn),0 0 24px -6px var(--c-warn)}
-.node.lit-err{border-color:var(--c-auth-no);box-shadow:0 0 0 1.5px var(--c-auth-no),0 0 24px -6px var(--c-auth-no)}
-.diamond{width:130px;height:66px;position:relative;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.node-azure-n{--accent:var(--c-azure)}
+.node-kyc-n{--accent:var(--c-kyc)}
+.node-nach-n{--accent:var(--c-nach)}
+.node-eq-n{--accent:var(--c-eq)}
+.node-audit{--accent:var(--c-audit)}
+.node-agg{--accent:#16a34a}
+.node-ok{--accent:#16a34a}
+.node-err{--accent:var(--c-auth-no)}
+
+/* AUTH DIAMOND */
+.diamond{width:136px;height:68px;position:relative;display:flex;align-items:center;justify-content:center;margin:0 auto}
 .diamond svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.diamond .d-text{font-size:12px;font-weight:600;position:relative;z-index:1;text-align:center;color:#fbbf24;line-height:1.3}
+.diamond .d-text{font-size:11.5px;font-weight:700;position:relative;z-index:1;text-align:center;color:#92400e;line-height:1.3}
 #d-poly{transition:fill .4s,stroke .4s}
+
+/* LAYOUT HELPERS */
 .col{display:flex;flex-direction:column;align-items:center}
-.row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
-.db-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:700px){.db-grid{grid-template-columns:repeat(2,1fr)}}
+.row-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%}
+@media(max-width:900px){.row-5{grid-template-columns:repeat(3,1fr)}}
+.branch-yes{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--c-auth-ok);letter-spacing:.06em}
+.branch-no{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--c-auth-no);letter-spacing:.06em}
+
+/* SVG OVERLAY */
 #arrows-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}
-.flow-path{fill:none;stroke:var(--border2);stroke-width:var(--flow-width);stroke-linecap:round;transition:stroke .4s}
-.flow-path.active{stroke:var(--flow-color)}
-.flow-path.error-path{stroke:var(--c-auth-no)!important}
-.flow-path.success-path{stroke:var(--c-success)!important}
-.flow-path.azure-path{stroke:var(--c-azure)!important}
-.flow-path.warn-path{stroke:var(--c-warn)!important}
-.branch-yes{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--c-auth-ok);letter-spacing:.06em}
-.branch-no{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--c-auth-no);letter-spacing:.06em}
-.log-panel{margin-top:28px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.log-header{padding:8px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#475569;display:flex;align-items:center;gap:8px}
+.flow-path{fill:none;stroke:rgba(0,0,0,0.08);stroke-width:2px;stroke-linecap:round;transition:stroke .35s}
+.flow-path.active{stroke:#185FA5}
+.flow-path.error-path{stroke:#dc2626!important}
+.flow-path.success-path{stroke:#16a34a!important}
+.flow-path.azure-path{stroke:#4f46e5!important}
+.flow-path.warn-path{stroke:#d97706!important}
+.flow-path.kyc-path{stroke:#7c3aed!important}
+.flow-path.nach-path{stroke:#d97706!important}
+.flow-path.eq-path{stroke:#ea580c!important}
+.flow-path.audit-path{stroke:#92400e!important}
+
+/* LOG */
+.log-panel{margin-top:24px;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+.log-header{padding:7px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;display:flex;align-items:center;gap:8px}
 .log-dot{width:6px;height:6px;border-radius:50%;background:var(--c-net);animation:blink 1.4s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
-.log-body{padding:12px 16px;min-height:80px;max-height:140px;overflow-y:auto;font-family:var(--font-mono);font-size:12px;line-height:1.8}
+.log-body{padding:10px 16px;min-height:72px;max-height:130px;overflow-y:auto;font-family:var(--font-mono);font-size:11.5px;line-height:1.8}
 .log-body::-webkit-scrollbar{width:4px}
-.log-body::-webkit-scrollbar-track{background:transparent}
 .log-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.log-entry{display:flex;gap:12px;animation:slideIn .25s ease both}
-@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.log-ts{color:#334155;min-width:60px}
-.log-msg{color:#94a3b8}
-.log-ok{color:var(--c-auth-ok)}
-.log-err{color:var(--c-auth-no)}
-.log-info{color:var(--c-net)}
-.log-azure{color:var(--c-azure)}
-.log-warn{color:var(--c-warn)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:20px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
-.legend-item{display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10px;color:#475569;letter-spacing:.04em}
-.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-.legend-line{width:22px;height:1.5px;flex-shrink:0}
-.legend-dashed{width:22px;border-top:1.5px dashed;flex-shrink:0}
-.gap4{height:4px}.gap8{height:8px}.gap12{height:12px}.gap16{height:16px}.gap20{height:20px}
+.log-entry{display:flex;gap:12px;animation:slideIn .2s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.log-ts{color:#cbd5e1;min-width:58px}
+.log-msg{color:#94a3b8}.log-ok{color:#059669}.log-err{color:#dc2626}
+.log-info{color:#185FA5}.log-azure{color:#4f46e5}.log-warn{color:#d97706}
+.log-kyc{color:#7c3aed}.log-nach{color:#d97706}.log-eq{color:#ea580c}.log-audit{color:#92400e}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;padding:10px 16px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow)}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:#94a3b8}
+.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.ll{width:20px;height:1.5px;flex-shrink:0}
+
+.gap8{height:8px}.gap12{height:12px}.gap16{height:16px}.gap20{height:20px}
 </style>
 </head>
 <body>
 <div class="page">
+
+  <!-- ── HEADER ── -->
   <div class="header">
     <div class="header-left">
       <h1>CFCICI SYSTEM <span>— Software Architecture Flow</span></h1>
-      <p>// request → auth → private cloud → response flow</p>
+      <p>// client → api gateway → auth → router → private cloud · azure · kyc · nach · equifax → response</p>
     </div>
     <div class="controls">
-      <button class="btn primary" onclick="runFlow('normal')">▶ Run full flow</button>
-      <button class="btn danger" onclick="runFlow('authfail')">✕ Auth failure</button>
-      <button class="btn upload" onclick="runFlow('upload')">⬆ File upload</button>
-      <button class="btn warn" onclick="runFlow('reqfail')">⚠ Request failure</button>
-      <button class="btn upload" onclick="runFlow('blobfail')">⬆ Blob failure</button>
-      <button class="btn" onclick="resetAll()">↺ Reset</button>
+      <button class="btn primary"  onclick="runFlow('normal')">▶ Full flow</button>
+      <button class="btn danger"   onclick="runFlow('authfail')">✕ Auth failure</button>
+      <button class="btn upload"   onclick="runFlow('upload')">⬆ File upload</button>
+      <button class="btn kyc-btn"  onclick="runFlow('kyc')">◈ KYC verify</button>
+      <button class="btn nach-btn" onclick="runFlow('nach')">⟳ NACH / eNACH</button>
+      <button class="btn eq-btn"   onclick="runFlow('equifax')">⊡ Equifax enquiry</button>
+      <button class="btn warn"     onclick="runFlow('reqfail')">⚠ Request failure</button>
+      <button class="btn upload"   onclick="runFlow('blobfail')">⬆ Blob failure</button>
+      <button class="btn"          onclick="resetAll()">↺ Reset</button>
     </div>
   </div>
 
+  <!-- ── CANVAS ── -->
   <div class="canvas" id="canvas">
     <svg id="arrows-svg" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <marker id="arr-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-        <marker id="arr-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-        <marker id="arr-error" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-        <marker id="arr-success" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-        <marker id="arr-azure" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#818cf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-        <marker id="arr-warn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="arr-def" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="rgba(0,0,0,0.10)" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-act" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-err" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-ok"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-az"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-wn"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-kc"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-nc"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-eq"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round"/></marker>
+        <marker id="arr-au"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#92400e" stroke-width="1.5" stroke-linecap="round"/></marker>
       </defs>
     </svg>
 
     <div class="col" style="gap:0;align-items:center">
-      <!-- CLIENT -->
+
+      <!-- CLIENT (outside boundary) -->
       <div id="n-client" class="node node-client" style="width:200px">
-        <div class="node-icon" style="background:rgba(167,139,250,0.15)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <div class="node-icon" style="background:#f5f3ff">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         </div>
         <div class="node-title">Client</div>
         <div class="node-sub">Browser / Mobile app</div>
       </div>
 
-      <div class="gap16" id="gap-client-gw"></div>
+      <div class="gap16"></div>
 
-      <!-- NETWORK ZONE -->
+      <!-- ══ NETWORK BOUNDARY ══ -->
       <div class="zone zone-network" style="width:100%" id="zone-network">
-        <div class="zone-label">CFCICI NETWORK PERIMETER</div>
-        <div class="col" style="gap:0;align-items:center">
+        <div class="zone-label">CFCICI Network Boundary</div>
+        <div class="col" style="gap:0;align-items:center;width:100%">
+
           <!-- API GATEWAY -->
-          <div id="n-gw" class="node node-gw" style="width:260px">
-            <div class="node-icon" style="background:rgba(56,189,248,0.12)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="20" cy="6" r="2" fill="#38bdf8" stroke="none"/></svg>
+          <div id="n-gw" class="node node-gw" style="width:280px">
+            <div class="node-icon" style="background:#e0f2fe">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="20" cy="6" r="2" fill="#185FA5" stroke="none"/></svg>
             </div>
             <div class="node-title">API Gateway</div>
             <div class="node-sub">TLS · routing · rate limiting</div>
           </div>
 
-          <div class="gap16" id="gap-gw-auth"></div>
+          <div class="gap16"></div>
 
           <!-- AUTH DIAMOND -->
           <div class="diamond" id="n-auth">
-            <svg viewBox="0 0 130 66" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <polygon id="d-poly" points="65,3 127,33 65,63 3,33" fill="rgba(251,191,36,0.06)" stroke="rgba(251,191,36,0.4)" stroke-width="1.5"/>
-            </svg>
+            <svg viewBox="0 0 136 68" fill="none"><polygon id="d-poly" points="68,3 133,34 68,65 3,34" fill="rgba(251,191,36,0.10)" stroke="#f59e0b" stroke-width="1.5"/></svg>
             <div class="d-text">Auth &amp;<br>Authz</div>
           </div>
 
           <div class="gap12"></div>
 
-          <!-- BRANCHES -->
-          <div style="width:100%;display:flex;align-items:flex-start;justify-content:center;gap:0;position:relative">
-            <!-- NO branch -->
-            <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;padding-right:16px">
-              <span class="branch-no" style="margin-bottom:4px;margin-right:8px">✕ NO</span>
-              <div class="gap8" id="gap-no"></div>
-              <div id="n-err" class="node node-error" style="width:180px">
-                <div class="node-icon" style="background:rgba(248,113,113,0.12)">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+          <!-- BRANCH ROW -->
+          <div style="width:100%;display:flex;align-items:flex-start;justify-content:center;gap:0">
+
+            <!-- NO BRANCH -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;padding-right:20px">
+              <span class="branch-no" style="margin-bottom:4px;margin-right:6px">✕ NO</span>
+              <div class="gap8"></div>
+              <div id="n-err" class="node node-err" style="width:188px">
+                <div class="node-icon" style="background:#fef2f2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
                 </div>
                 <div class="node-title">Error Response</div>
-                <div id="err-sub" class="node-sub">401 / 403 → Client</div>
+                <div id="err-sub" class="node-sub">401 / 403 → Rollback</div>
               </div>
             </div>
 
-            <!-- YES column -->
-            <div style="display:flex;flex-direction:column;align-items:center">
+            <!-- YES BRANCH -->
+            <div style="display:flex;flex-direction:column;align-items:center;flex:4">
               <span class="branch-yes" style="margin-bottom:4px">✓ YES</span>
-              <div class="gap12" id="gap-yes-db"></div>
+              <div class="gap12"></div>
 
-              <!-- PRIVATE CLOUD ZONE -->
-              <div class="zone zone-private" id="zone-private" style="width:640px;max-width:100%">
-                <div class="zone-label">Private cloud — CF Databases</div>
-                <div class="db-grid">
-                  <div id="n-svl" class="node node-db">
-                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
-                    <div class="node-title">CF_SVL</div>
-                    <div class="node-sub">SVL domain</div>
-                  </div>
-                  <div id="n-deposits" class="node node-db">
-                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
-                    <div class="node-title">CF_DEPOSITS</div>
-                    <div class="node-sub">DEPOSIT</div>
-                  </div>
-                  <div id="n-loans" class="node node-db">
-                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
-                    <div class="node-title">CF_LOANS</div>
-                    <div class="node-sub">Loan records</div>
-                  </div>
-                  <div id="n-acct" class="node node-db">
-                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
-                    <div class="node-title">CF_ACCOUNTS</div>
-                    <div class="node-sub">Account data</div>
-                  </div>
-                  <div id="n-master" class="node node-db">
-                    <div class="node-icon" style="background:rgba(96,165,250,0.12)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
-                    <div class="node-title">CF_MASTER</div>
-                    <div class="node-sub">Master data</div>
-                  </div>
+              <!-- REQUEST ROUTER -->
+              <div id="n-router" class="node node-router" style="width:280px">
+                <div class="node-icon" style="background:#f0fdf4">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f6e56" stroke-width="2" stroke-linecap="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
                 </div>
+                <div class="node-title">Request Router</div>
+                <div class="node-sub">Business logic · dispatch</div>
               </div>
 
-              <div class="gap16" id="gap-db-resp"></div>
+              <div class="gap16"></div>
 
-              <!-- AZURE ZONE -->
-              <div class="zone zone-azure" id="zone-azure" style="width:640px;max-width:100%;opacity:.35;transition:opacity .5s">
-                <div class="zone-label">Microsoft Azure</div>
-                <div style="display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap">
-                  <div id="n-blob" class="node node-azure" style="width:210px">
-                    <div class="node-icon" style="background:rgba(129,140,248,0.12)">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"/><path d="M16 8l-4-4-4 4"/><path d="M12 4v12"/></svg>
+              <!-- ══ SERVICE LANES (5 columns) ══ -->
+              <div class="row-5">
+
+                <!-- LANE 1: Private Cloud -->
+                <div class="zone zone-private" id="zone-private">
+                  <div class="zone-label" style="color:#0f6e56">Private Cloud</div>
+                  <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+                    <div id="n-primary" class="node node-db">
+                      <div class="node-icon" style="background:#dbeafe">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>
+                      </div>
+                      <div class="node-title">Primary DB</div>
+                      <div class="node-sub">MySQL · master</div>
                     </div>
-                    <div class="node-title">Azure Blob Storage</div>
-                    <div class="node-sub">Images / Documents</div>
-                  </div>
-                  <div style="font-family:var(--font-mono);font-size:10px;color:#334155;line-height:1.7;text-align:left">
-                    <div style="color:#4c1d95;font-weight:600;font-size:11px;margin-bottom:4px">Upload flow:</div>
-                    <div>1. File → Blob Storage</div>
-                    <div>2. Azure returns Blob URL</div>
-                    <div>3. URL saved → CF_MASTER</div>
-                    <div>4. Success → Client</div>
+                    <div id="n-secondary" class="node node-db">
+                      <div class="node-icon" style="background:#dbeafe">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>
+                      </div>
+                      <div class="node-title">Secondary DB</div>
+                      <div class="node-sub">MySQL · failover</div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="gap16" id="gap-azure-success"></div>
-
-              <!-- RESPONSE -->
-              <div id="n-resp" class="node node-success" style="width:260px;opacity:.4;transition:opacity .4s">
-                <div class="node-icon" style="background:rgba(74,222,128,0.12)">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                <!-- LANE 2: Azure Blob -->
+                <div class="zone zone-azure" id="zone-azure" style="opacity:.35">
+                  <div class="zone-label">Azure Blob</div>
+                  <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+                    <div id="n-blob" class="node node-azure-n">
+                      <div class="node-icon" style="background:#eef2ff">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"/><path d="M16 8l-4-4-4 4"/><path d="M12 4v12"/></svg>
+                      </div>
+                      <div class="node-title">Azure Blob</div>
+                      <div class="node-sub">Images · Docs</div>
+                    </div>
+                    <div style="font-family:var(--font-mono);font-size:9.5px;color:#94a3b8;line-height:1.65;padding:0 4px">
+                      <div style="color:#4f46e5;font-weight:600;margin-bottom:2px">Upload flow:</div>
+                      <div>1. File → Blob</div>
+                      <div>2. URL generated</div>
+                      <div>3. URL → DB</div>
+                      <div>4. 200 → Client</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="node-title">Success Response</div>
-                <div class="node-sub">200 OK → Client</div>
-              </div>
-            </div>
 
+                <!-- LANE 3: KYC -->
+                <div class="zone zone-kyc" id="zone-kyc" style="opacity:.35">
+                  <div class="zone-label">KYC</div>
+                  <div style="margin-top:8px">
+                    <div id="n-kyc" class="node node-kyc-n">
+                      <div class="node-icon" style="background:#f5f3ff">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      </div>
+                      <div class="node-title">KYC Verification</div>
+                      <div class="node-sub">Identity · Liveness</div>
+                    </div>
+                    <div style="font-family:var(--font-mono);font-size:9.5px;color:#94a3b8;line-height:1.65;padding:6px 4px 0">
+                      <div style="color:#7c3aed;font-weight:600;margin-bottom:2px">Checks:</div>
+                      <div>Doc verification</div>
+                      <div>Liveness check</div>
+                      <div>Status → DB</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LANE 4: NACH -->
+                <div class="zone zone-nach" id="zone-nach" style="opacity:.35">
+                  <div class="zone-label">Payments</div>
+                  <div style="margin-top:8px">
+                    <div id="n-nach" class="node node-nach-n">
+                      <div class="node-icon" style="background:#fffbeb">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                      </div>
+                      <div class="node-title">NACH / eNACH</div>
+                      <div class="node-sub">/ upiNACH</div>
+                    </div>
+                    <div style="font-family:var(--font-mono);font-size:9.5px;color:#94a3b8;line-height:1.65;padding:6px 4px 0">
+                      <div style="color:#d97706;font-weight:600;margin-bottom:2px">Mandate:</div>
+                      <div>Registration</div>
+                      <div>Debit processing</div>
+                      <div>Ref → DB</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LANE 5: Equifax -->
+                <div class="zone zone-eq" id="zone-eq" style="opacity:.35">
+                  <div class="zone-label">Credit Bureau</div>
+                  <div style="margin-top:8px">
+                    <div id="n-eq" class="node node-eq-n">
+                      <div class="node-icon" style="background:#fff7ed">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                      </div>
+                      <div class="node-title">Equifax</div>
+                      <div class="node-sub">Credit enquiry</div>
+                    </div>
+                    <div style="font-family:var(--font-mono);font-size:9.5px;color:#94a3b8;line-height:1.65;padding:6px 4px 0">
+                      <div style="color:#ea580c;font-weight:600;margin-bottom:2px">Bureau pull:</div>
+                      <div>Credit score</div>
+                      <div>Report fetch</div>
+                      <div>Score → DB</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div><!-- end row-5 -->
+
+              <div class="gap16"></div>
+
+              <!-- RESPONSE AGGREGATOR + AUDIT LOG side by side -->
+              <div style="display:flex;gap:16px;width:100%;justify-content:center;align-items:stretch">
+
+                <div id="n-agg" class="node node-agg" style="flex:1;max-width:320px;opacity:.35;transition:opacity .4s">
+                  <div class="node-icon" style="background:#f0fdf4">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                  </div>
+                  <div class="node-title">Response Aggregator</div>
+                  <div class="node-sub">Compose final payload</div>
+                </div>
+
+                <div id="n-audit" class="node node-audit" style="flex:1;max-width:320px;opacity:.35;transition:opacity .4s">
+                  <div class="node-icon" style="background:#fef9ec">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  </div>
+                  <div class="node-title">Audit Log — MySQL</div>
+                  <div class="node-sub">All requests persisted</div>
+                </div>
+
+              </div>
+
+              <div class="gap16"></div>
+
+              <!-- 200 OK -->
+              <div id="n-ok" class="node node-ok" style="width:300px;opacity:.35;transition:opacity .4s">
+                <div class="node-icon" style="background:#f0fdf4">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <div class="node-title">200 OK Response</div>
+                <div class="node-sub">JSON · blob URL · status</div>
+              </div>
+
+              <div class="gap12"></div>
+
+              <!-- CLIENT SUCCESS -->
+              <div id="n-success" class="node node-ok" style="width:300px;opacity:.35;transition:opacity .4s">
+                <div class="node-icon" style="background:#f0fdf4">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <div class="node-title">Client receives success</div>
+                <div class="node-sub">UI updated · toast shown</div>
+              </div>
+
+            </div><!-- end YES col -->
             <div style="flex:1"></div>
-          </div>
+          </div><!-- end branch row -->
+
         </div>
-      </div>
+      </div><!-- end network zone -->
     </div>
-  </div>
+  </div><!-- end canvas -->
 
   <!-- LEGEND -->
   <div class="legend">
-    <div style="font-family:var(--font-mono);font-size:10px;color:#334155;text-transform:uppercase;letter-spacing:.1em;width:100%;margin-bottom:2px">Legend</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(167,139,250,0.5);border:1px solid #a78bfa"></div>Client</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(56,189,248,0.2);border:1px solid #38bdf8"></div>Network / Gateway</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(251,191,36,0.15);border:1px solid #fbbf24"></div>Auth decision</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(96,165,250,0.2);border:1px solid #60a5fa"></div>CF Databases</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(129,140,248,0.2);border:1px solid #818cf8"></div>Azure Blob</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(74,222,128,0.2);border:1px solid #4ade80"></div>Success</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(248,113,113,0.2);border:1px solid #f87171"></div>Error / Reject</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(251,191,36,0.2);border:1px solid #fbbf24"></div>Warning / Timeout</div>
-    <div class="legend-item"><div class="legend-line" style="background:#38bdf8"></div>Active flow</div>
-    <div class="legend-item"><div class="legend-dashed" style="border-color:#38bdf8;opacity:.4"></div>Zone boundary</div>
+    <div style="font-family:var(--font-mono);font-size:10px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.1em;width:100%;margin-bottom:2px">Legend</div>
+    <div class="legend-item"><div class="ld" style="background:#f5f3ff;border:1px solid #7c3aed"></div>Client</div>
+    <div class="legend-item"><div class="ld" style="background:#e0f2fe;border:1px solid #185FA5"></div>Gateway</div>
+    <div class="legend-item"><div class="ld" style="background:#fef3c7;border:1px solid #f59e0b"></div>Auth</div>
+    <div class="legend-item"><div class="ld" style="background:#dbeafe;border:1px solid #2563eb"></div>MySQL DB</div>
+    <div class="legend-item"><div class="ld" style="background:#eef2ff;border:1px solid #4f46e5"></div>Azure Blob</div>
+    <div class="legend-item"><div class="ld" style="background:#f5f3ff;border:1px solid #7c3aed"></div>KYC</div>
+    <div class="legend-item"><div class="ld" style="background:#fffbeb;border:1px solid #d97706"></div>NACH</div>
+    <div class="legend-item"><div class="ld" style="background:#fff7ed;border:1px solid #ea580c"></div>Equifax</div>
+    <div class="legend-item"><div class="ld" style="background:#fef9ec;border:1px solid #92400e"></div>Audit log</div>
+    <div class="legend-item"><div class="ld" style="background:#f0fdf4;border:1px solid #16a34a"></div>Success</div>
+    <div class="legend-item"><div class="ld" style="background:#fef2f2;border:1px solid #dc2626"></div>Error</div>
+    <div class="legend-item"><div class="ll" style="background:#185FA5"></div>Active flow</div>
+    <div class="legend-item"><div class="ll" style="border-top:1.5px dashed rgba(0,0,0,0.15)"></div>Zone boundary</div>
   </div>
 
-  <!-- LOG -->
+  <!-- LOG PANEL -->
   <div class="log-panel">
     <div class="log-header"><div class="log-dot"></div>Request trace log</div>
     <div class="log-body" id="log">
       <div class="log-entry"><span class="log-ts">--:--:--</span><span class="log-msg">Ready. Press a flow button to simulate a request.</span></div>
     </div>
   </div>
-</div>
+
+</div><!-- end page -->
 
 <script>
-const svg = document.getElementById('arrows-svg');
+const svgEl = document.getElementById('arrows-svg');
 const canvas = document.getElementById('canvas');
 let paths = {};
 let running = false;
 
-function getCenter(el) {
-  const cr = canvas.getBoundingClientRect();
-  const er = el.getBoundingClientRect();
-  return {
-    x: er.left - cr.left + er.width / 2,
-    y: er.top - cr.top + er.height / 2,
-    top: er.top - cr.top,
-    bottom: er.bottom - cr.top,
-    left: er.left - cr.left,
-    right: er.right - cr.left,
-    w: er.width,
-    h: er.height
-  };
+function gc(el){
+  const cr=canvas.getBoundingClientRect(), er=el.getBoundingClientRect();
+  return{x:er.left-cr.left+er.width/2, y:er.top-cr.top+er.height/2,
+         top:er.top-cr.top, bottom:er.bottom-cr.top,
+         left:er.left-cr.left, right:er.right-cr.left,
+         w:er.width, h:er.height};
 }
 
-function makePath(id, d, cls) {
-  let p = document.getElementById('path-' + id);
-  if (!p) {
-    p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    p.id = 'path-' + id;
-    p.classList.add('flow-path');
-    p.setAttribute('marker-end', 'url(#arr-default)');
-    svg.appendChild(p);
-  }
-  p.setAttribute('d', d);
-  p.className.baseVal = 'flow-path';
-  if (cls) p.classList.add(cls);
-  paths[id] = p;
-  return p;
+function mkPath(id,d){
+  let p=document.getElementById('p-'+id);
+  if(!p){p=document.createElementNS('http://www.w3.org/2000/svg','path');p.id='p-'+id;p.classList.add('flow-path');p.setAttribute('marker-end','url(#arr-def)');svgEl.appendChild(p);}
+  p.setAttribute('d',d); p.className.baseVal='flow-path'; p.setAttribute('marker-end','url(#arr-def)');
+  paths[id]=p; return p;
 }
 
-function activatePath(id, cls) {
-  cls = cls || 'active';
-  const p = paths[id] || document.getElementById('path-' + id);
-  if (!p) return;
-  p.className.baseVal = 'flow-path ' + cls;
-  const markerMap = { active:'arr-active','error-path':'arr-error','success-path':'arr-success','azure-path':'arr-azure','warn-path':'arr-warn' };
-  p.setAttribute('marker-end', 'url(#' + (markerMap[cls] || 'arr-active') + ')');
+const mmap={'active':'arr-act','error-path':'arr-err','success-path':'arr-ok','azure-path':'arr-az',
+            'warn-path':'arr-wn','kyc-path':'arr-kc','nach-path':'arr-nc','eq-path':'arr-eq','audit-path':'arr-au'};
+
+function actPath(id,cls){
+  cls=cls||'active'; const p=paths[id]; if(!p)return;
+  p.className.baseVal='flow-path '+cls;
+  p.setAttribute('marker-end','url(#'+(mmap[cls]||'arr-act')+')');
 }
 
-function spawnParticle(pathEl, color, delay) {
-  delay = delay || 0;
-  return new Promise(function(r) {
-    setTimeout(function() {
-      const len = pathEl.getTotalLength ? pathEl.getTotalLength() : 100;
-      const circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circ.setAttribute('r', '4.5');
-      circ.setAttribute('fill', color);
-      circ.style.filter = 'drop-shadow(0 0 5px ' + color + ')';
-      circ.style.opacity = '0';
-      svg.appendChild(circ);
-      let start = null;
-      const dur = Math.max(600, len * 2.2);
-      function step(ts) {
-        if (!start) start = ts;
-        const t = Math.min((ts - start) / dur, 1);
-        const eased = t < .1 ? t * 10 : t > .9 ? (1 - t) * 10 : 1;
-        circ.style.opacity = eased;
-        const pt = pathEl.getPointAtLength(t * len);
-        circ.setAttribute('cx', pt.x);
-        circ.setAttribute('cy', pt.y);
-        if (t < 1) requestAnimationFrame(step);
-        else { circ.remove(); r(); }
+function spawnP(pathEl,color,delay){
+  delay=delay||0;
+  return new Promise(res=>{
+    setTimeout(()=>{
+      const len=pathEl.getTotalLength?pathEl.getTotalLength():80;
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('r','4'); c.setAttribute('fill',color);
+      c.style.filter='drop-shadow(0 0 5px '+color+')'; c.style.opacity='0';
+      svgEl.appendChild(c);
+      let st=null; const dur=Math.max(480,len*1.9);
+      function step(ts){
+        if(!st)st=ts;
+        const t=Math.min((ts-st)/dur,1);
+        const e=t<.1?t*10:t>.9?(1-t)*10:1;
+        c.style.opacity=e;
+        const pt=pathEl.getPointAtLength(t*len);
+        c.setAttribute('cx',pt.x); c.setAttribute('cy',pt.y);
+        if(t<1)requestAnimationFrame(step); else{c.remove();res();}
       }
       requestAnimationFrame(step);
-    }, delay);
+    },delay);
   });
 }
 
-function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
-function addLog(msg, type) {
-  type = type || 'msg';
-  const logEl = document.getElementById('log');
-  const now = new Date();
-  const ts = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
-  const div = document.createElement('div');
-  div.className = 'log-entry';
-  div.innerHTML = '<span class="log-ts">'+ts+'</span><span class="log-'+type+'">'+msg+'</span>';
-  logEl.appendChild(div);
-  logEl.scrollTop = logEl.scrollHeight;
+function addLog(msg,type){
+  type=type||'msg';
+  const el=document.getElementById('log');
+  const now=new Date();
+  const ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  const d=document.createElement('div'); d.className='log-entry';
+  d.innerHTML='<span class="log-ts">'+ts+'</span><span class="log-'+type+'">'+msg+'</span>';
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
 }
 
-function lightNode(id, state) {
-  const el = document.getElementById(id);
-  if (!el) return;
+function litNode(id,state){
+  const el=document.getElementById(id); if(!el)return;
   el.classList.remove('lit','lit-warn','lit-err');
-  if (state === 'warn') el.classList.add('lit-warn');
-  else if (state === 'err') el.classList.add('lit-err');
-  else if (state !== false) el.classList.add('lit');
+  if(state==='warn')el.classList.add('lit-warn');
+  else if(state==='err')el.classList.add('lit-err');
+  else if(state!==false)el.classList.add('lit');
 }
 
-function clearNodes() {
-  ['n-client','n-gw','n-err','n-svl','n-loans','n-acct','n-deposits','n-blob','n-resp','n-master'].forEach(function(id) {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('lit','lit-warn','lit-err');
-  });
+const allNodes=['n-client','n-gw','n-err','n-router','n-primary','n-secondary','n-blob','n-kyc','n-nach','n-eq','n-agg','n-audit','n-ok','n-success'];
+
+function clearAll(){allNodes.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('lit','lit-warn','lit-err');});}
+
+function resetAll(){
+  running=false; clearAll();
+  svgEl.querySelectorAll('.flow-path').forEach(p=>{p.className.baseVal='flow-path';p.setAttribute('marker-end','url(#arr-def)');});
+  document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.10)');
+  document.getElementById('d-poly').setAttribute('stroke','#f59e0b');
+  ['n-agg','n-audit','n-ok','n-success'].forEach(id=>{ const el=document.getElementById(id); if(el)el.style.opacity='.35'; });
+  ['zone-azure','zone-kyc','zone-nach','zone-eq'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.opacity='.35';});
+  document.getElementById('err-sub').textContent='401 / 403 → Rollback';
+  document.getElementById('log').innerHTML='<div class="log-entry"><span class="log-ts">--:--:--</span><span class="log-msg">Reset complete.</span></div>';
+  drawPaths();
 }
 
-function resetAll() {
-  running = false;
-  clearNodes();
-  document.querySelectorAll('.flow-path').forEach(function(p) {
-    p.className.baseVal = 'flow-path';
-    p.setAttribute('marker-end', 'url(#arr-default)');
-  });
-  const poly = document.getElementById('d-poly');
-  poly.setAttribute('fill','rgba(251,191,36,0.06)');
-  poly.setAttribute('stroke','rgba(251,191,36,0.4)');
-  document.getElementById('n-resp').style.opacity = '.4';
-  document.getElementById('zone-azure').style.opacity = '.35';
-  document.getElementById('err-sub').textContent = '401 / 403 → Client';
-  document.getElementById('log').innerHTML = '<div class="log-entry"><span class="log-ts">--:--:--</span><span class="log-msg">Reset complete.</span></div>';
-  drawStaticPaths();
+function drawPaths(){
+  svgEl.querySelectorAll('.flow-path').forEach(p=>p.remove()); paths={};
+
+  const cl =gc(document.getElementById('n-client'));
+  const gw =gc(document.getElementById('n-gw'));
+  const au =gc(document.getElementById('n-auth'));
+  const err=gc(document.getElementById('n-err'));
+  const rt =gc(document.getElementById('n-router'));
+  const pr =gc(document.getElementById('n-primary'));
+  const sc =gc(document.getElementById('n-secondary'));
+  const bl =gc(document.getElementById('n-blob'));
+  const kc =gc(document.getElementById('n-kyc'));
+  const nc =gc(document.getElementById('n-nach'));
+  const eq =gc(document.getElementById('n-eq'));
+  const ag =gc(document.getElementById('n-agg'));
+  const ad =gc(document.getElementById('n-audit'));
+  const ok =gc(document.getElementById('n-ok'));
+  const su =gc(document.getElementById('n-success'));
+
+  // client → gw
+  mkPath('c-gw',    `M${cl.x} ${cl.bottom} L${gw.x} ${gw.top-6}`);
+  // gw → auth
+  mkPath('gw-auth', `M${gw.x} ${gw.bottom} L${au.x} ${au.y-35}`);
+  // auth NO → err
+  const aL=au.x-68;
+  mkPath('auth-err',   `M${aL} ${au.y} L${err.right+6} ${err.y}`);
+  mkPath('err-client', `M${err.left-6} ${err.y} L${cl.left-28} ${err.y} L${cl.left-28} ${cl.y} L${cl.left-6} ${cl.y}`);
+  // auth YES → router
+  const aB=au.y+35;
+  mkPath('auth-rt',   `M${au.x} ${aB} L${rt.x} ${rt.top-6}`);
+  // router → each lane (fan out via bus)
+  mkPath('rt-pri',  `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${pr.x} ${pr.top-6}`);
+  mkPath('rt-sec',  `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${sc.x} ${sc.top-6}`);
+  mkPath('rt-blob', `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${bl.x} ${bl.top-6}`);
+  mkPath('rt-kyc',  `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${kc.x} ${kc.top-6}`);
+  mkPath('rt-nach', `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${nc.x} ${nc.top-6}`);
+  mkPath('rt-eq',   `M${rt.x} ${rt.bottom} Q${rt.x} ${rt.bottom+30} ${eq.x} ${eq.top-6}`);
+  // blob return → aggregator
+  mkPath('blob-agg',`M${bl.x} ${bl.bottom+6} Q${bl.x} ${bl.bottom+40} ${ag.x} ${ag.top-6}`);
+  // lanes → aggregator (response paths)
+  mkPath('pri-agg', `M${pr.x} ${pr.bottom+6} Q${pr.x} ${pr.bottom+50} ${ag.x-30} ${ag.top-6}`);
+  mkPath('kyc-agg', `M${kc.x} ${kc.bottom+6} Q${kc.x} ${kc.bottom+40} ${ag.x+10} ${ag.top-6}`);
+  mkPath('nach-agg',`M${nc.x} ${nc.bottom+6} Q${nc.x} ${nc.bottom+40} ${ag.x+30} ${ag.top-6}`);
+  mkPath('eq-agg',  `M${eq.x} ${eq.bottom+6} Q${eq.x} ${eq.bottom+40} ${ag.x+50} ${ag.top-6}`);
+  // agg → audit
+  mkPath('agg-aud', `M${ag.right+6} ${ag.y} L${ad.left-6} ${ad.y}`);
+  // agg → 200 OK
+  mkPath('agg-ok',  `M${ag.x} ${ag.bottom+6} L${ok.x} ${ok.top-6}`);
+  // 200 ok → client success
+  mkPath('ok-su',   `M${ok.x} ${ok.bottom+6} L${su.x} ${su.top-6}`);
+  // gw timeout path
+  mkPath('gw-fail', `M${gw.x} ${gw.bottom} Q${gw.x} ${gw.bottom+60} ${cl.left-28} ${gw.bottom+60} L${cl.left-28} ${cl.y} L${cl.left-6} ${cl.y}`);
+  // blob fail → back to error state
+  mkPath('blob-err',`M${bl.x} ${bl.bottom+6} Q${bl.x} ${bl.bottom+50} ${ok.x} ${ok.top-6}`);
 }
 
-function drawStaticPaths() {
-  svg.querySelectorAll('.flow-path').forEach(function(p) { p.remove(); });
-  paths = {};
+window.addEventListener('resize',()=>{if(!running)drawPaths();});
+drawPaths();
 
-  const c   = getCenter(document.getElementById('n-client'));
-  const gw  = getCenter(document.getElementById('n-gw'));
-  const aEl = document.getElementById('n-auth');
-  const aC  = getCenter(aEl);
-  const err = getCenter(document.getElementById('n-err'));
-  const svl = getCenter(document.getElementById('n-svl'));
-  const lo  = getCenter(document.getElementById('n-loans'));
-  const de  = getCenter(document.getElementById('n-deposits'));
-  const ac  = getCenter(document.getElementById('n-acct'));
-  const ma  = getCenter(document.getElementById('n-master'));
-  const blob= getCenter(document.getElementById('n-blob'));
-  const res = getCenter(document.getElementById('n-resp'));
+// ── AUTH HELPERS ──
+function authPending(){document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.15)');document.getElementById('d-poly').setAttribute('stroke','#f59e0b');}
+function authPass(){document.getElementById('d-poly').setAttribute('fill','rgba(5,150,105,0.12)');document.getElementById('d-poly').setAttribute('stroke','#059669');}
+function authFail(){document.getElementById('d-poly').setAttribute('fill','rgba(220,38,38,0.10)');document.getElementById('d-poly').setAttribute('stroke','#dc2626');}
 
-  makePath('c-gw',    'M '+c.x+' '+c.bottom+' L '+gw.x+' '+(gw.top-6));
-  makePath('gw-auth', 'M '+gw.x+' '+gw.bottom+' L '+aC.x+' '+(aC.y-33+2));
-
-  const authLeft = aC.x - 65;
-  makePath('auth-err', 'M '+authLeft+' '+aC.y+' L '+(err.right+6)+' '+err.y);
-  makePath('err-client','M '+(err.left-6)+' '+err.y+' L '+(c.left-28)+' '+err.y+' L '+(c.left-28)+' '+c.y+' L '+(c.left-6)+' '+c.y);
-
-  const authBottom = aC.y + 33;
-  makePath('auth-svl',      'M '+svl.x+' '+(svl.top-6)+' L '+svl.x+' '+(authBottom+50));
-  makePath('auth-loans',    'M '+lo.x+' '+(lo.top-6)+' L '+lo.x+' '+(authBottom+50));
-  makePath('auth-deposits', 'M '+de.x+' '+(de.top-6)+' L '+de.x+' '+(authBottom+50));
-  makePath('auth-acct',     'M '+ac.x+' '+(ac.top-6)+' L '+ac.x+' '+(authBottom+50));
-  makePath('auth-master',   'M '+ma.x+' '+(ma.top-6)+' L '+ma.x+' '+(authBottom+50));
-
-  const dbBot = Math.max(svl.bottom, lo.bottom, ac.bottom, ma.bottom);
-  makePath('db-resp',    'M '+res.x+' '+(res.top-6)+' L '+res.x+' '+(dbBot+50));
-  makePath('db-success', 'M '+res.x+' '+(res.top-6)+' L '+res.x+' '+(dbBot+20));
-
-  makePath('master-blob',  'M '+(ma.right+6)+' '+ma.y+' Q '+(ma.right+60)+' '+ma.y+' '+(ma.right+60)+' '+blob.y+' L '+(blob.left-6)+' '+blob.y);
-  makePath('blob-master',  'M '+(blob.left-6)+' '+(blob.y+16)+' Q '+(ma.right+40)+' '+(blob.y+16)+' '+(ma.right+40)+' '+(ma.y+16)+' L '+(ma.right+6)+' '+(ma.y+16));
-
-  makePath('gw-client-fail','M '+gw.x+' '+gw.bottom+' Q '+gw.x+' '+(gw.bottom+60)+' '+(c.left-28)+' '+(gw.bottom+60)+' L '+(c.left-28)+' '+c.y+' L '+(c.left-6)+' '+c.y);
-
-  makePath('blob-fail-resp','M '+res.x+' '+(res.top-6)+' L '+res.x+' '+(dbBot+50));
+async function clientToAuth(){
+  addLog('→ Client sends HTTPS request','info'); litNode('n-client');
+  actPath('c-gw','active'); await spawnP(paths['c-gw'],'#185FA5');
+  await wait(180);
+  addLog('→ API Gateway — TLS terminated, routing request','info'); litNode('n-gw');
+  actPath('gw-auth','active'); await spawnP(paths['gw-auth'],'#185FA5');
+  await wait(200);
+  addLog('→ Auth &amp; Authz — validating JWT / OAuth 2.0…','msg');
+  authPending(); await wait(780);
 }
 
-window.addEventListener('resize', function() { if (!running) drawStaticPaths(); });
-drawStaticPaths();
+async function routerAndDB(){
+  authPass();
+  addLog('✓ Auth passed — RBAC permissions granted','ok');
+  await wait(150);
+  addLog('→ Request Router dispatching to services','info'); litNode('n-router');
+  actPath('auth-rt','active'); await spawnP(paths['auth-rt'],'#185FA5');
+  await wait(150);
+  addLog('→ Routing to Private Cloud MySQL databases','info');
+  actPath('rt-pri','active'); await spawnP(paths['rt-pri'],'#2563eb',0);
+  litNode('n-primary');
+  actPath('rt-sec','active'); await spawnP(paths['rt-sec'],'#2563eb',120);
+  litNode('n-secondary');
+  await wait(300);
+  addLog('← DB queries executed — MySQL primary &amp; secondary updated','ok');
+}
 
-async function runFlow(type) {
-  if (running) return;
-  running = true;
-  resetAll();
-  await wait(120);
+async function finalize(label){
+  await wait(200);
+  addLog('→ Response Aggregator — composing payload','ok');
+  document.getElementById('n-agg').style.opacity='1'; litNode('n-agg');
+  actPath('agg-aud','audit-path'); await spawnP(paths['agg-aud'],'#92400e');
+  document.getElementById('n-audit').style.opacity='1'; litNode('n-audit');
+  addLog('→ Audit Log (MySQL) — request persisted','audit');
+  await wait(180);
+  actPath('agg-ok','success-path');
+  document.getElementById('n-ok').style.opacity='1';
+  await spawnP(paths['agg-ok'],'#16a34a');
+  litNode('n-ok');
+  await wait(80);
+  actPath('ok-su','success-path');
+  document.getElementById('n-success').style.opacity='1';
+  await spawnP(paths['ok-su'],'#16a34a');
+  litNode('n-success');
+  addLog(label,'ok');
+}
 
-  const colors = { active:'#38bdf8', error:'#f87171', success:'#4ade80', azure:'#818cf8', warn:'#fbbf24' };
+async function runFlow(type){
+  if(running)return; running=true; resetAll(); await wait(100);
+  const C={act:'#185FA5',err:'#dc2626',ok:'#16a34a',az:'#4f46e5',wn:'#d97706',kc:'#7c3aed',nc:'#d97706',eq:'#ea580c',au:'#92400e'};
 
-  if (type === 'normal' || type === 'upload') {
-    addLog('→ Client sends HTTP request', 'info');
-    lightNode('n-client');
-    activatePath('c-gw','active');
-    await spawnParticle(paths['c-gw'], colors.active);
+  // ── NORMAL ──
+  if(type==='normal'){
+    await clientToAuth(); await routerAndDB();
+    await finalize('✓ Flow complete — 200 OK returned to client');
 
+  // ── UPLOAD ──
+  }else if(type==='upload'){
+    await clientToAuth(); await routerAndDB();
+    document.getElementById('zone-azure').style.opacity='1';
     await wait(200);
-    addLog('→ Enters network — API Gateway receives request', 'info');
-    lightNode('n-gw');
-    activatePath('gw-auth','active');
-    await spawnParticle(paths['gw-auth'], colors.active);
+    addLog('→ File detected — routing to Azure Blob Storage','azure');
+    actPath('rt-blob','azure-path'); await spawnP(paths['rt-blob'],C.az);
+    litNode('n-blob');
+    await wait(380);
+    addLog('← Azure — file stored, Blob URL generated','azure');
+    actPath('blob-agg','azure-path'); await spawnP(paths['blob-agg'],C.az);
+    addLog('→ Blob URL persisted to MySQL (Primary DB)','ok');
+    await finalize('✓ Upload complete — file in Azure, URL in DB, 200 OK to client');
 
+  // ── KYC ──
+  }else if(type==='kyc'){
+    await clientToAuth(); await routerAndDB();
+    document.getElementById('zone-kyc').style.opacity='1';
     await wait(200);
-    addLog('→ Authenticating identity + checking permissions…', 'msg');
-    document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.15)');
-    document.getElementById('d-poly').setAttribute('stroke','rgba(251,191,36,0.7)');
-    await wait(700);
+    addLog('→ KYC required — initiating identity verification','kyc');
+    actPath('rt-kyc','kyc-path'); await spawnP(paths['rt-kyc'],C.kc);
+    litNode('n-kyc');
+    await wait(450);
+    addLog('← KYC — identity verified, liveness passed, document OK','kyc');
+    actPath('kyc-agg','kyc-path'); await spawnP(paths['kyc-agg'],C.kc);
+    addLog('→ KYC status written to Primary DB','ok');
+    await finalize('✓ KYC complete — identity verified, 200 OK to client');
 
-    addLog('✓ Auth passed — token valid, permissions granted', 'ok');
-    document.getElementById('d-poly').setAttribute('fill','rgba(52,211,153,0.15)');
-    document.getElementById('d-poly').setAttribute('stroke','rgba(52,211,153,0.8)');
-
-    const pIds = ['auth-svl','auth-loans','auth-acct','auth-deposits','auth-master'];
-    const nIds = ['n-svl','n-loans','n-acct','n-deposits','n-master'];
-    addLog('→ Routing request into Private Cloud — CF Databases', 'info');
-
-    await Promise.all(pIds.map(function(_, i) {
-      return (async function() {
-        await wait(i * 120);
-        activatePath(pIds[i], 'active');
-        await spawnParticle(paths[pIds[i]], colors.active);
-        lightNode(nIds[i]);
-      })();
-    }));
-    await wait(300);
-    addLog('← DB query executed — records fetched', 'ok');
-
-    if (type === 'upload') {
-      document.getElementById('zone-azure').style.opacity = '1';
-      await wait(200);
-      addLog('→ File/image detected — routing to Azure Blob Storage', 'azure');
-      activatePath('master-blob','azure-path');
-      await spawnParticle(paths['master-blob'], colors.azure);
-      lightNode('n-blob');
-      await wait(300);
-      addLog('← Azure Blob Storage — file uploaded, URL generated', 'azure');
-      activatePath('blob-master','azure-path');
-      await spawnParticle(paths['blob-master'], colors.azure);
-      await wait(200);
-      addLog('→ Blob URL persisted to CF_MASTER database', 'ok');
-    }
-
+  // ── NACH ──
+  }else if(type==='nach'){
+    await clientToAuth(); await routerAndDB();
+    document.getElementById('zone-nach').style.opacity='1';
     await wait(200);
-    addLog('← Sending success response back to client', 'ok');
-    activatePath('db-resp','success-path');
-    document.getElementById('n-resp').style.opacity = '1';
-    await spawnParticle(paths['db-resp'], colors.success);
-    lightNode('n-resp');
-    await wait(100);
-    addLog(type === 'upload'
-      ? '✓ Flow complete — file stored in Azure, URL in DB, 200 OK to client'
-      : '✓ Flow complete — 200 OK returned to client', 'ok');
+    addLog('→ Mandate request — routing to NACH / eNACH / upiNACH','nach');
+    actPath('rt-nach','nach-path'); await spawnP(paths['rt-nach'],C.nc);
+    litNode('n-nach');
+    await wait(450);
+    addLog('← NACH — mandate registered, debit instruction confirmed','nach');
+    actPath('nach-agg','nach-path'); await spawnP(paths['nach-agg'],C.nc);
+    addLog('→ NACH mandate reference stored in Primary DB','ok');
+    await finalize('✓ NACH flow complete — mandate active, 200 OK to client');
 
-  } else if (type === 'authfail') {
-    addLog('→ Client sends HTTP request', 'info');
-    lightNode('n-client');
-    activatePath('c-gw','active');
-    await spawnParticle(paths['c-gw'], colors.active);
-
+  // ── EQUIFAX ──
+  }else if(type==='equifax'){
+    await clientToAuth(); await routerAndDB();
+    document.getElementById('zone-eq').style.opacity='1';
     await wait(200);
-    addLog('→ API Gateway receives request', 'info');
-    lightNode('n-gw');
-    activatePath('gw-auth','active');
-    await spawnParticle(paths['gw-auth'], colors.active);
-
-    await wait(300);
-    addLog('→ Checking auth token…', 'msg');
-    document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.12)');
-    document.getElementById('d-poly').setAttribute('stroke','rgba(251,191,36,0.6)');
-    await wait(800);
-
-    addLog('✕ Auth FAILED — invalid or expired token', 'err');
-    document.getElementById('d-poly').setAttribute('fill','rgba(248,113,113,0.15)');
-    document.getElementById('d-poly').setAttribute('stroke','rgba(248,113,113,0.8)');
-
-    await wait(200);
-    activatePath('auth-err','error-path');
-    await spawnParticle(paths['auth-err'], colors.error);
-    lightNode('n-err');
-    await wait(200);
-    addLog('→ Rolling back — no DB access granted', 'err');
-    activatePath('err-client','error-path');
-    await spawnParticle(paths['err-client'], colors.error);
-    lightNode('n-client');
-    await wait(100);
-    addLog('← 401 Unauthorised returned to client', 'err');
-    addLog('✕ Flow terminated at auth boundary', 'err');
-
-  } else if (type === 'reqfail') {
-    addLog('→ Client sends HTTP request', 'info');
-    lightNode('n-client');
-    activatePath('c-gw','active');
-    await spawnParticle(paths['c-gw'], colors.active);
-
-    await wait(200);
-    addLog('→ API Gateway receives request', 'info');
-    lightNode('n-gw');
-    await wait(300);
-    addLog('⚠ Gateway processing — checking upstream health…', 'warn');
+    addLog('→ Credit check required — calling Equifax bureau','eq');
+    actPath('rt-eq','eq-path'); await spawnP(paths['rt-eq'],C.eq);
+    litNode('n-eq');
     await wait(500);
-    addLog('⚠ Upstream unreachable — connection timeout triggered', 'warn');
+    addLog('← Equifax — credit score received, bureau report fetched','eq');
+    actPath('eq-agg','eq-path'); await spawnP(paths['eq-agg'],C.eq);
+    addLog('→ Credit score persisted to Primary DB','ok');
+    await finalize('✓ Equifax enquiry complete — score stored, 200 OK to client');
+
+  // ── AUTH FAIL ──
+  }else if(type==='authfail'){
+    addLog('→ Client sends HTTPS request','info'); litNode('n-client');
+    actPath('c-gw','active'); await spawnP(paths['c-gw'],C.act);
+    await wait(180);
+    addLog('→ API Gateway receives request','info'); litNode('n-gw');
+    actPath('gw-auth','active'); await spawnP(paths['gw-auth'],C.act);
+    await wait(200);
+    addLog('→ Checking auth token…','msg'); authPending(); await wait(850);
+    addLog('✕ Auth FAILED — invalid or expired token','err'); authFail();
+    await wait(200);
+    actPath('auth-err','error-path'); await spawnP(paths['auth-err'],C.err);
+    litNode('n-err');
+    await wait(200);
+    addLog('→ Rolling back — no DB or services accessed','err');
+    actPath('err-client','error-path'); await spawnP(paths['err-client'],C.err);
+    litNode('n-client','err');
+    addLog('← 401 Unauthorised returned to client','err');
+    addLog('✕ Flow terminated at auth boundary','err');
+
+  // ── REQUEST FAIL ──
+  }else if(type==='reqfail'){
+    addLog('→ Client sends HTTPS request','info'); litNode('n-client');
+    actPath('c-gw','active'); await spawnP(paths['c-gw'],C.act);
+    await wait(180);
+    addLog('→ API Gateway — checking upstream health','info'); litNode('n-gw');
+    await wait(320);
+    addLog('⚠ Upstream auth service unreachable — timeout','warn');
     await wait(600);
-    addLog('✕ Request FAILED — gateway could not reach auth service', 'err');
-    lightNode('n-gw','warn');
-    await wait(300);
-    addLog('→ Gateway returns error to client — rolling back', 'warn');
-    activatePath('gw-client-fail','warn-path');
-    await spawnParticle(paths['gw-client-fail'], colors.warn);
-    lightNode('n-client','warn');
+    addLog('✕ Connection timeout — request failed at gateway','err'); litNode('n-gw','warn');
+    await wait(280);
+    addLog('→ Returning error to client — rolling back','warn');
+    actPath('gw-fail','warn-path'); await spawnP(paths['gw-fail'],C.wn);
+    litNode('n-client','warn');
+    document.getElementById('err-sub').textContent='503 / 408 → Client';
+    litNode('n-err','warn');
+    addLog('← 503 Service Unavailable / 408 Timeout returned','warn');
+    addLog('✕ Terminated at network perimeter — retry recommended','warn');
+
+  // ── BLOB FAIL ──
+  }else if(type==='blobfail'){
+    await clientToAuth(); await routerAndDB();
+    document.getElementById('zone-azure').style.opacity='1';
     await wait(200);
-    document.getElementById('err-sub').textContent = '503 / 408 → Client';
-    lightNode('n-err','warn');
-    addLog('← 503 Service Unavailable / 408 Timeout returned to client', 'warn');
-    addLog('✕ Request terminated at network perimeter — retry recommended', 'warn');
-
-  } else if (type === 'blobfail') {
-    addLog('→ Client sends HTTP request (file upload)', 'info');
-    lightNode('n-client');
-    activatePath('c-gw','active');
-    await spawnParticle(paths['c-gw'], colors.active);
-
-    await wait(200);
-    addLog('→ API Gateway receives request', 'info');
-    lightNode('n-gw');
-    activatePath('gw-auth','active');
-    await spawnParticle(paths['gw-auth'], colors.active);
-
-    await wait(200);
-    addLog('→ Authenticating…', 'msg');
-    document.getElementById('d-poly').setAttribute('fill','rgba(251,191,36,0.15)');
-    document.getElementById('d-poly').setAttribute('stroke','rgba(251,191,36,0.7)');
-    await wait(700);
-    addLog('✓ Auth passed — routing to private cloud', 'ok');
-    document.getElementById('d-poly').setAttribute('fill','rgba(52,211,153,0.15)');
-    document.getElementById('d-poly').setAttribute('stroke','rgba(52,211,153,0.8)');
-
-    const pIds = ['auth-svl','auth-deposits','auth-loans','auth-acct','auth-master'];
-    const nIds = ['n-svl','n-deposits','n-loans','n-acct','n-master'];
-    await Promise.all(pIds.map(function(_, i) {
-      return (async function() {
-        await wait(i * 100);
-        activatePath(pIds[i],'active');
-        await spawnParticle(paths[pIds[i]], colors.active);
-        lightNode(nIds[i]);
-      })();
-    }));
-    await wait(300);
-    addLog('← DB query OK — file upload detected', 'ok');
-
-    document.getElementById('zone-azure').style.opacity = '1';
-    await wait(200);
-    addLog('→ Routing file to Azure Blob Storage…', 'azure');
-    activatePath('master-blob','azure-path');
-    await spawnParticle(paths['master-blob'], colors.azure);
-    await wait(300);
-    addLog('✕ Azure Blob Storage ERROR — upload failed', 'err');
-    lightNode('n-blob','err');
+    addLog('→ File upload — routing to Azure Blob Storage','azure');
+    actPath('rt-blob','azure-path'); await spawnP(paths['rt-blob'],C.az);
+    await wait(380);
+    addLog('✕ Azure Blob ERROR — upload failed','err'); litNode('n-blob','err');
     await wait(400);
-    addLog('✕ Blob URL NOT generated — CF_MASTER NOT updated', 'err');
-    addLog('→ Rolling back DB transaction — reverting changes', 'err');
-    activatePath('blob-fail-resp','error-path');
-    document.getElementById('n-resp').style.opacity = '0.4';
-    await spawnParticle(paths['blob-fail-resp'], colors.error);
-    await wait(200);
-    addLog('← 500 Internal Server Error returned to client', 'err');
-    lightNode('n-client','err');
-    addLog('✕ Upload flow failed at Azure boundary — file not stored', 'err');
-    addLog('⚠ Retry or check Azure storage quota / network connectivity', 'warn');
+    addLog('✕ Blob URL NOT generated — DB NOT updated','err');
+    addLog('→ Rolling back DB transaction','err');
+    actPath('blob-err','error-path'); await spawnP(paths['blob-err'],C.err);
+    litNode('n-client','err');
+    addLog('← 500 Internal Server Error returned to client','err');
+    addLog('⚠ Check Azure quota / connectivity / SAS token','warn');
   }
 
-  running = false;
+  running=false;
 }
 </script>
 </body>
